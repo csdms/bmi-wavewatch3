@@ -6,6 +6,7 @@ from datetime import datetime
 
 import requests
 import xarray as xr
+from tqdm import tqdm
 
 
 class WaveWatch3Downloader:
@@ -65,9 +66,10 @@ class WaveWatch3Downloader:
         )
 
     @staticmethod
-    def fetch(url, destination=None, clobber=True):
+    def fetch(url, destination=None, clobber=True, progress_bar=True):
         destination = pathlib.Path("." if destination is None else destination)
         name = pathlib.Path(urllib.parse.urlparse(url).path).name
+        progress = silent_progress_bar if progress_bar is None else tqdm
 
         if destination.is_dir():
             destination /= name
@@ -78,14 +80,17 @@ class WaveWatch3Downloader:
         resp = requests.get(url, stream=True)
         resp.raise_for_status()
 
+        total_size_in_bytes = int(resp.headers.get("content-length", 0))
         with tempfile.TemporaryDirectory() as tmpdirname:
             filepath = pathlib.Path(tmpdirname) / name
             with open(filepath, "wb") as fp:
-                for chunk in resp.iter_content(chunk_size=None):
-                    fp.write(chunk)
+                with progress(total=total_size_in_bytes, leave=True) as pbar:
+                    for chunk in resp.iter_content(chunk_size=1024):
+                        fp.write(chunk)
+                        pbar.update(len(chunk))
             shutil.move(filepath, destination)
 
-        return pathlib.Path(destination).absolute()
+        return destination.absolute()
 
     @staticmethod
     def load(filepath):
@@ -107,3 +112,17 @@ class WaveWatch3Downloader:
     @property
     def url(self):
         return self._url
+
+
+class silent_progressbar(object):
+    def __init__(self, **kwds):
+        pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        pass
+
+    def update(self, inc):
+        pass
