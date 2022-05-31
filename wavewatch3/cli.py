@@ -74,15 +74,14 @@ def url(ctx, date):
     is_flag=True,
     help="force download even if local file already exists",
 )
+@click.option("--file", type=click.File("r", lazy=False), help="read url from a file")
 @click.pass_context
-def fetch(ctx, date, dry_run, force):
+def fetch(ctx, date, dry_run, force, file):
     verbose = ctx.parent.params["verbose"]
     silent = ctx.parent.params["silent"]
     region = ctx.parent.params["region"]
     quantity = ctx.parent.params["quantity"]
 
-    if not date:
-        date = ["2005-02-01"]
     if not quantity:
         quantity = sorted(WaveWatch3Downloader.QUANTITIES)
 
@@ -92,6 +91,9 @@ def fetch(ctx, date, dry_run, force):
             urls.append(
                 WaveWatch3Downloader.data_url(date=d, quantity=q, region=region)
             )
+
+    if file:
+        urls += file.read().splitlines()
 
     if not silent and verbose:
         for url in urls:
