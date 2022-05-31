@@ -68,8 +68,14 @@ def url(ctx, date):
 @ww3.command()
 @click.argument("date", nargs=-1)
 @click.option("--dry-run", is_flag=True, help="do not actually download data")
+@click.option(
+    "--force",
+    "-f",
+    is_flag=True,
+    help="force download even if local file already exists",
+)
 @click.pass_context
-def fetch(ctx, date, dry_run):
+def fetch(ctx, date, dry_run, force):
     verbose = ctx.parent.params["verbose"]
     silent = ctx.parent.params["silent"]
     region = ctx.parent.params["region"]
@@ -87,38 +93,45 @@ def fetch(ctx, date, dry_run):
                 WaveWatch3Downloader.data_url(date=d, quantity=q, region=region)
             )
 
-    if not silent:
+    if not silent and verbose:
         for url in urls:
             out(url)
 
     if not dry_run:
-        local_files = _retreive_urls(urls, disable=silent)
+        local_files = _retreive_urls(urls, disable=silent, force=force)
         for local_file in local_files:
             print(local_file.absolute())
 
 
-def _retreive_urls(urls, disable=False):
+def _retreive_urls(urls, disable=False, force=False):
     tqdm.set_lock(RLock())
     p = Pool(initializer=tqdm.set_lock, initargs=(tqdm.get_lock(),))
-    return p.map(partial(_retreive, disable=disable), list(enumerate(urls)))
+    return p.map(
+        partial(_retreive, disable=disable, force=force), list(enumerate(urls))
+    )
 
 
-def _retreive(position_and_url, disable=False):
+def _retreive(position_and_url, disable=False, force=False):
     position, url = position_and_url
     name = pathlib.Path(urllib.parse.urlparse(url).path).name
-    with TqdmUpTo(
-        unit="B",
-        unit_scale=True,
-        unit_divisor=1024,
-        miniters=1,
-        desc=name,
-        position=position,
-        disable=disable,
-    ) as t:
-        filepath, msg = urllib.request.urlretrieve(
-            url, reporthook=t.update_to, data=None, filename=name
-        )
-        t.total = t.n
+
+    if not pathlib.Path(name).is_file() or force:
+        with TqdmUpTo(
+            unit="B",
+            unit_scale=True,
+            unit_divisor=1024,
+            miniters=1,
+            desc=name,
+            position=position,
+            disable=disable,
+        ) as t:
+            filepath = WaveWatch3Downloader.retreive(
+                url, filename=name, reporthook=t.update_to
+            )
+            t.total = t.n
+    else:
+        out(f"cached: {name}")
+
     return pathlib.Path(name).absolute()
 
 
