@@ -102,8 +102,6 @@ def _retreive_urls(urls, disable=False):
     p = Pool(initializer=tqdm.set_lock, initargs=(tqdm.get_lock(),))
     return p.map(partial(_retreive, disable=disable), list(enumerate(urls)))
 
-    # return p.map(_retreive, list(enumerate(urls)), disable=disable)
-
 
 def _retreive(position_and_url, disable=False):
     position, url = position_and_url
