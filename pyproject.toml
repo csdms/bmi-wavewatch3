@@ -35,6 +35,7 @@ dependencies = [
   "bmipy",
   "cfgrib",
   "click",
+  "pyyaml",
   "tqdm",
   "xarray",
 ]
