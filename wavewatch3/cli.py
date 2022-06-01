@@ -83,15 +83,15 @@ def fetch(ctx, date, dry_run, force, file):
     if not quantity:
         quantity = sorted(WaveWatch3Downloader.QUANTITIES)
 
+    if file:
+        date += file.read().splitlines()
+
     urls = []
     for d in date:
         for q in quantity:
             urls.append(
                 WaveWatch3Downloader.data_url(date=d, quantity=q, region=region)
             )
-
-    if file:
-        urls += file.read().splitlines()
 
     if not silent and verbose:
         for url in urls:
