@@ -1,12 +1,8 @@
 import pathlib
-import shutil
-import tempfile
 import urllib
 from datetime import datetime
 
-import requests
 import xarray as xr
-from tqdm import tqdm
 
 
 class WaveWatch3Downloader:
