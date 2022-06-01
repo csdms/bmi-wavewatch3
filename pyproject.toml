@@ -35,7 +35,6 @@ dependencies = [
   "bmipy",
   "cfgrib",
   "click",
-  "requests",
   "tqdm",
   "xarray",
 ]
@@ -57,12 +56,8 @@ dev = [
 ]
 testing = [
   "coveralls",
-  "hypothesis",
   "pytest",
   "pytest-cov",
-  "pytest-datadir",
-  "pytest-xdist",
-  "pyyaml",
 ]
 
 
