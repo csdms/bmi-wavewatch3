@@ -56,8 +56,6 @@ def url(ctx, date):
     region = ctx.parent.params["region"]
     quantity = ctx.parent.params["quantity"]
 
-    if not date:
-        date = ["2005-02-01"]
     if not quantity:
         quantity = sorted(WaveWatch3Downloader.QUANTITIES)
     for d in date:
