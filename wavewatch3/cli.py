@@ -1,4 +1,3 @@
-import datetime
 import os
 import pathlib
 import sys
@@ -7,7 +6,6 @@ from functools import partial
 from multiprocessing import Pool, RLock
 
 import click
-import dask.bag as db
 from tqdm.auto import tqdm
 from .downloader import WaveWatch3Downloader
 
@@ -125,9 +123,7 @@ def _retreive(position_and_url, disable=False, force=False):
             position=position,
             disable=disable,
         ) as t:
-            filepath = WaveWatch3Downloader.retreive(
-                url, filename=name, reporthook=t.update_to
-            )
+            WaveWatch3Downloader.retreive(url, filename=name, reporthook=t.update_to)
             t.total = t.n
     else:
         out(f"cached: {name}")
