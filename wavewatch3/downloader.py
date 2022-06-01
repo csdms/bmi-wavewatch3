@@ -6,6 +6,7 @@ from datetime import datetime
 
 import requests
 import xarray as xr
+from tqdm import tqdm
 
 
 class WaveWatch3Downloader:
@@ -65,6 +66,10 @@ class WaveWatch3Downloader:
         )
 
     @staticmethod
+    def url_file_part(url):
+        return pathlib.Path(urllib.parse.urlparse(url).path).name
+
+    @staticmethod
     def fetch(url, destination=None, clobber=True):
         destination = pathlib.Path("." if destination is None else destination)
         name = pathlib.Path(urllib.parse.urlparse(url).path).name
@@ -75,17 +80,18 @@ class WaveWatch3Downloader:
         if destination.is_file() and not clobber:
             raise ValueError(f"{destination}: file exists")
 
-        resp = requests.get(url, stream=True)
-        resp.raise_for_status()
+        filepath, msg = urllib.request.urlretrieve(url, filename=destination)
 
-        with tempfile.TemporaryDirectory() as tmpdirname:
-            filepath = pathlib.Path(tmpdirname) / name
-            with open(filepath, "wb") as fp:
-                for chunk in resp.iter_content(chunk_size=None):
-                    fp.write(chunk)
-            shutil.move(filepath, destination)
+        return destination.absolute()
 
-        return pathlib.Path(destination).absolute()
+    @staticmethod
+    def retreive(url, filename=None, reporthook=None):
+        if filename is None:
+            filename = WaveWatch3Downloader.url_file_part(url)
+        filepath, msg = urllib.request.urlretrieve(
+            url, reporthook=reporthook, data=None, filename=filename
+        )
+        return filepath
 
     @staticmethod
     def load(filepath):

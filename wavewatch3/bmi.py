@@ -6,7 +6,7 @@ import numpy
 import yaml
 from bmipy import Bmi
 
-from .wavewatch3 import WaveWatch3Downloader
+from .downloader import WaveWatch3Downloader
 
 BmiVar = namedtuple(
     "BmiVar", ["dtype", "itemsize", "nbytes", "units", "location", "grid"]

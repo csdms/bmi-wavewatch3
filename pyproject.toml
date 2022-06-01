@@ -34,7 +34,9 @@ requires-python = ">=3.8"
 dependencies = [
   "bmipy",
   "cfgrib",
+  "click",
   "requests",
+  "tqdm",
   "xarray",
 ]
 dynamic = ["readme", "version"]
@@ -65,7 +67,7 @@ testing = [
 
 
 [project.scripts]
-landlab = "wavewatch3.cli:main"
+ww3 = "wavewatch3.cli:ww3"
 
 
 [tool.setuptools.packages.find]
