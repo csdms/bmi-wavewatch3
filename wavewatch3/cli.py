@@ -7,7 +7,8 @@ from multiprocessing import Pool, RLock
 
 import click
 from tqdm.auto import tqdm
-from .downloader import WaveWatch3Downloader, WaveWatch3URL
+from .downloader import WaveWatch3Downloader
+from .url import WaveWatch3URL
 
 
 out = partial(click.secho, bold=True, file=sys.stderr)
