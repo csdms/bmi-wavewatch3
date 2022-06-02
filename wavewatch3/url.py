@@ -32,7 +32,7 @@ class WaveWatch3URL:
         self.region = region
 
     def __str__(self):
-        prefix = pathlib.PosixPath(f"{self.year}/{self.month:02d}")
+        prefix = pathlib.PurePosixPath(f"{self.year}", f"{self.month:02d}")
         prefix /= self.region if self.year < 2017 else "gribs"
 
         return urllib.parse.urlunparse(
