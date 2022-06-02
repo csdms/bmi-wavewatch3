@@ -1,6 +1,6 @@
 import pathlib
 import urllib
-from datetime import datetime
+import datetime
 
 import xarray as xr
 

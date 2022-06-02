@@ -7,7 +7,8 @@ from multiprocessing import Pool, RLock
 
 import click
 from tqdm.auto import tqdm
-from .downloader import WaveWatch3Downloader
+from .downloader import WaveWatch3Downloader, WaveWatch3URL
+
 
 out = partial(click.secho, bold=True, file=sys.stderr)
 err = partial(click.secho, fg="red", file=sys.stderr)
@@ -32,14 +33,14 @@ err = partial(click.secho, fg="red", file=sys.stderr)
 )
 @click.option(
     "--region",
-    type=click.Choice(sorted(WaveWatch3Downloader.REGIONS)),
+    type=click.Choice(sorted(WaveWatch3URL.REGIONS)),
     default="glo_30m",
     help="Region to download",
 )
 @click.option(
     "--quantity",
     "-q",
-    type=click.Choice(sorted(WaveWatch3Downloader.QUANTITIES)),
+    type=click.Choice(sorted(WaveWatch3URL.QUANTITIES)),
     multiple=True,
     help="Quantity to download",
 )
@@ -52,13 +53,11 @@ def ww3(cd, silent, verbose, region, quantity) -> None:
 @click.pass_context
 def url(ctx, date):
     region = ctx.parent.params["region"]
-    quantity = ctx.parent.params["quantity"]
+    quantity = ctx.parent.params["quantity"] or sorted(WaveWatch3URL.QUANTITIES)
 
-    if not quantity:
-        quantity = sorted(WaveWatch3Downloader.QUANTITIES)
     for d in date:
         for q in quantity:
-            print(WaveWatch3Downloader.data_url(date=d, quantity=q, region=region))
+            print(WaveWatch3URL(d, q, region=region))
 
 
 @ww3.command()
@@ -76,10 +75,7 @@ def fetch(ctx, date, dry_run, force, file):
     verbose = ctx.parent.params["verbose"]
     silent = ctx.parent.params["silent"]
     region = ctx.parent.params["region"]
-    quantity = ctx.parent.params["quantity"]
-
-    if not quantity:
-        quantity = sorted(WaveWatch3Downloader.QUANTITIES)
+    quantity = ctx.parent.params["quantity"] or sorted(WaveWatch3URL.QUANTITIES)
 
     if file:
         date += file.read().splitlines()
@@ -87,9 +83,7 @@ def fetch(ctx, date, dry_run, force, file):
     urls = []
     for d in date:
         for q in quantity:
-            urls.append(
-                WaveWatch3Downloader.data_url(date=d, quantity=q, region=region)
-            )
+            urls.append(str(WaveWatch3URL(d, q, region=region)))
 
     if not silent and verbose:
         for url in urls:
