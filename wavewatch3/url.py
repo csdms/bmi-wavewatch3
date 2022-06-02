@@ -77,9 +77,17 @@ class WaveWatch3URL:
     def year(self):
         return self._date.year
 
+    @year.setter
+    def year(self, year):
+        self._date = datetime.date(year, self.month, self._date.day)
+
     @property
     def month(self):
         return self._date.month
+
+    @month.setter
+    def month(self, month):
+        self._date = datetime.date(self.year, month, self._date.day)
 
     @property
     def filename(self):
