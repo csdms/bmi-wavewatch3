@@ -39,8 +39,8 @@ def test_clean(tmpdir):
         data_file.touch()
 
         assert data_file.is_file()
-        result = runner.invoke(ww3, ["clean", "--cache-dir=.", "--dry-run"])
+        runner.invoke(ww3, ["clean", "--cache-dir=.", "--dry-run"])
         assert data_file.is_file()
 
-        result = runner.invoke(ww3, ["clean", "--cache-dir=.", "--yes"])
+        runner.invoke(ww3, ["clean", "--cache-dir=.", "--yes"])
         assert not data_file.is_file()

@@ -122,10 +122,10 @@ def clean(ctx, dry_run, cache_dir, yes):
         itertools.chain(cache_dir.glob(pattern), cache_dir.glob(pattern + ".*.idx"))
     )
 
-    if not silent:
-        total_bytes = 0
+    total_bytes = sum([cache_file.stat().st_size for cache_file in cache_files])
+
+    if not silent and not dry_run:
         for cache_file in cache_files:
-            total_bytes += cache_file.stat().st_size
             out(f"{cache_file}")
         out(f"Total size: {total_bytes // 2**20} MB")
 
@@ -139,6 +139,9 @@ def clean(ctx, dry_run, cache_dir, yes):
             out(f"rm {cache_file}")
         else:
             cache_file.unlink()
+
+    if not dry_run and (verbose and not silent):
+        out(f"Removed {len(cache_files)} files ({total_bytes} bytes)")
 
 
 def _retreive_urls(urls, disable=False, force=False):
