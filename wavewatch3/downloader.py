@@ -1,9 +1,6 @@
 import pathlib
 import urllib
 import urllib.request
-import datetime
-
-import xarray as xr
 
 
 class WaveWatch3Downloader:
