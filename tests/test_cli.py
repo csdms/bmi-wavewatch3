@@ -24,7 +24,7 @@ def test_subcommand_help(subcommand):
     assert result.exit_code == 0
 
 
-@pytest.mark.parametrize("subcommand", ("url", "fetch", "clean"))
+@pytest.mark.parametrize("subcommand", ("url", "fetch"))
 def test_noop(subcommand):
     runner = CliRunner()
     result = runner.invoke(ww3, [subcommand])
@@ -42,5 +42,5 @@ def test_clean(tmpdir):
         result = runner.invoke(ww3, ["clean", "--cache-dir=.", "--dry-run"])
         assert data_file.is_file()
 
-        result = runner.invoke(ww3, ["clean", "--cache-dir=."])
+        result = runner.invoke(ww3, ["clean", "--cache-dir=.", "--yes"])
         assert not data_file.is_file()
