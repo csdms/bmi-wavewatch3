@@ -33,6 +33,10 @@ class WaveWatch3:
         return self._data
 
     @property
+    def region(self):
+        return self._urls[0].region
+
+    @property
     def date(self):
         return self._date.isoformat()
 
@@ -75,6 +79,13 @@ class WaveWatch3:
         date = self._urls[0]._date.isoformat()
         region = self._urls[0].region
         return f"WaveWatch3({date!r}, region={region!r})"
+
+    def __eq__(self, other):
+        return (
+            self.month == other.month
+            and self.year == other.year
+            and self.region == other.region
+        )
 
 
 @contextlib.contextmanager
