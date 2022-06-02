@@ -1,3 +1,4 @@
+import itertools
 import os
 import pathlib
 import sys
@@ -94,6 +95,41 @@ def fetch(ctx, date, dry_run, force, file):
         local_files = _retreive_urls(urls, disable=silent, force=force)
         for local_file in local_files:
             print(local_file.absolute())
+
+
+@ww3.command()
+@click.option("--dry-run", is_flag=True, help="only display what would have been done")
+@click.option(
+    "--cache-dir",
+    type=click.Path(file_okay=False, path_type=pathlib.Path),
+    help="cache folder to clean",
+    default="~/.wavewatch3/data",
+)
+@click.pass_context
+def clean(ctx, dry_run, cache_dir):
+    verbose = ctx.parent.params["verbose"]
+    silent = ctx.parent.params["silent"]
+
+    region = "*"
+    quantity = "*"
+    date = "*"
+    pattern = f"multi_1.{region}.{quantity}.{date}.grb2"
+
+    cache_dir = cache_dir.expanduser()
+    cache_files = itertools.chain(
+        cache_dir.glob(pattern), cache_dir.glob(pattern + ".*.idx")
+    )
+    total_bytes = 0
+    for cache_file in cache_files:
+        total_bytes += cache_file.stat().st_size
+        if verbose or dry_run:
+            out(f"rm {cache_file}")
+        if not dry_run:
+            cache_file.unlink()
+    if not silent:
+        out(
+            f"{'would have ' if dry_run else ''}cleaned a total of {total_bytes // 2**20} MB"
+        )
 
 
 def _retreive_urls(urls, disable=False, force=False):
