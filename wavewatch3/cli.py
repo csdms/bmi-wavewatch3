@@ -1,3 +1,4 @@
+import itertools
 import os
 import pathlib
 import sys
@@ -94,6 +95,53 @@ def fetch(ctx, date, dry_run, force, file):
         local_files = _retreive_urls(urls, disable=silent, force=force)
         for local_file in local_files:
             print(local_file.absolute())
+
+
+@ww3.command()
+@click.option("--dry-run", is_flag=True, help="only display what would have been done")
+@click.option(
+    "--cache-dir",
+    type=click.Path(file_okay=False, path_type=pathlib.Path),
+    help="cache folder to clean",
+    default="~/.wavewatch3/data",
+)
+@click.option("--yes", is_flag=True, help="remove files without prompting")
+# @click.confirmation_option(prompt="Are you sure you want to remove all cached files?")
+@click.pass_context
+def clean(ctx, dry_run, cache_dir, yes):
+    verbose = ctx.parent.params["verbose"]
+    silent = ctx.parent.params["silent"]
+
+    region = "*"
+    quantity = "*"
+    date = "*"
+    pattern = f"multi_1.{region}.{quantity}.{date}.grb2"
+
+    cache_dir = cache_dir.expanduser()
+    cache_files = list(
+        itertools.chain(cache_dir.glob(pattern), cache_dir.glob(pattern + ".*.idx"))
+    )
+
+    total_bytes = sum([cache_file.stat().st_size for cache_file in cache_files])
+
+    if not silent and not dry_run:
+        for cache_file in cache_files:
+            out(f"{cache_file}")
+        out(f"Total size: {total_bytes // 2**20} MB")
+
+    if not dry_run and len(cache_files):
+        yes = yes or click.confirm(
+            "Are you sure you want to remove all files?", abort=True
+        )
+
+    for cache_file in cache_files:
+        if dry_run:
+            out(f"rm {cache_file}")
+        else:
+            cache_file.unlink()
+
+    if not dry_run and (verbose and not silent):
+        out(f"Removed {len(cache_files)} files ({total_bytes} bytes)")
 
 
 def _retreive_urls(urls, disable=False, force=False):
