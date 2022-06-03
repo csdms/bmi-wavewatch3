@@ -315,7 +315,7 @@ class BmiWaveWatch3(Bmi):
         ndarray of float
             The input numpy array that holds the grid's column x-coordinates.
         """
-        x[:] = self._data.longitude.values
+        x[:] = self._data.longitude.data
         return x
 
     def get_grid_y(self, grid: int, y: numpy.ndarray) -> numpy.ndarray:
@@ -333,7 +333,7 @@ class BmiWaveWatch3(Bmi):
         ndarray of float
             The input numpy array that holds the grid's row y-coordinates.
         """
-        y[:] = self._data.latitude.values
+        y[:] = self._data.latitude.data
         return y
 
     def get_grid_z(self, grid: int, z: numpy.ndarray) -> numpy.ndarray:
@@ -507,13 +507,9 @@ class BmiWaveWatch3(Bmi):
         array_like
             A reference to a model variable.
         """
-        if name == self._data.u.standard_name:
-            name = "u"
-        elif name == self._data.v.standard_name:
-            name = "v"
-        array = self._data[name]
+        local_name = self._standard_to_local_name[name]
+        array = self._data[local_name]
         return numpy.asarray(array.data[self._time_index, :, :])
-        # return array.values[self._time_index, ::-1, :]
 
     def get_var_grid(self, name: str) -> int:
         """Get grid identifier for the given variable.
@@ -669,8 +665,20 @@ class BmiWaveWatch3(Bmi):
 
         self._grid, var_to_id = _grids_from_dataset(self._data)
         self._var = _vars_from_dataset(self._data, var_to_id)
-        self._output_var_names = tuple(self._var)
         self._time_index = 0
+
+        self._standard_to_local_name = {
+            "wave_direction": "dirpw",  # Primary wave direction
+            "wave_period": "perpw",  # Primary wave mean period
+            "wave_height": "swh",  # Significant height of combined wind waves and swell
+            "eastward_wind_speed": "u",  # U component of wind (eastward_wind)
+            "northward_wind_speed": "v",  # V component of wind (northward_wind)
+        }
+        self._var = {
+            standard: self._var[local]
+            for standard, local in self._standard_to_local_name.items()
+        }
+        self._output_var_names = tuple(self._standard_to_local_name)
 
     def set_value(self, name: str, values: numpy.ndarray) -> None:
         """Specify a new value for a model variable.
@@ -758,8 +766,7 @@ def _var_grid(dataset):
 def _vars_from_dataset(dataset, var_to_gid):
     vars = {}
     for name, var in dataset.data_vars.items():
-        standard_name = var.standard_name if var.standard_name != "unknown" else name
-        vars[standard_name] = BmiVar(
+        vars[name] = BmiVar(
             dtype=str(var.dtype),
             itemsize=var.data.itemsize,
             nbytes=var.data[0, :, :].nbytes,
