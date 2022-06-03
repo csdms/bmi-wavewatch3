@@ -5,10 +5,10 @@ import urllib
 from .errors import ChoiceError
 
 
-class WaveWatch3URL:
+class WaveWatch3URLBase:
     SCHEME = "https"
-    NETLOC = "www.ncei.noaa.gov"
-    PREFIX = "/thredds-ocean/fileServer/ncep/nww3"
+    NETLOC = ""
+    PREFIX = ""
 
     REGIONS = {
         "glo_30m",
@@ -21,7 +21,7 @@ class WaveWatch3URL:
         "wc_4m",
         "ak_4m",
     }
-    QUANTITIES = {"wind", "hs", "tp", "dp"}
+    QUANTITIES = {"wind", "hs", "tp", "dp"}  # phs, ptp, pdir added 2017 onward
 
     def __init__(self, date, quantity, region="glo_30m"):
         self._date = datetime.date.fromisoformat(date)
@@ -32,14 +32,12 @@ class WaveWatch3URL:
         self.region = region
 
     def __str__(self):
-        prefix = pathlib.PurePosixPath(f"{self.year}", f"{self.month:02d}")
-        prefix /= self.region if self.year < 2017 else "gribs"
-
         return urllib.parse.urlunparse(
             [
-                WaveWatch3URL.SCHEME,
-                WaveWatch3URL.NETLOC,
-                str(WaveWatch3URL.PREFIX / prefix / self.filename),
+                self.SCHEME,
+                self.NETLOC,
+                str(self.path),
+                # str(WaveWatch3URL.PREFIX / self.path / self.filename),
                 "",
                 "",
                 "",
@@ -59,8 +57,8 @@ class WaveWatch3URL:
 
     @region.setter
     def region(self, region):
-        if region not in WaveWatch3URL.REGIONS:
-            raise ChoiceError(region, WaveWatch3URL.REGIONS)
+        if region not in self.REGIONS:
+            raise ChoiceError(region, self.REGIONS)
         self._region = region
 
     @property
@@ -69,8 +67,8 @@ class WaveWatch3URL:
 
     @quantity.setter
     def quantity(self, quantity):
-        if quantity not in WaveWatch3URL.QUANTITIES:
-            raise ChoiceError(quantity, WaveWatch3URL.QUANTITIES)
+        if quantity not in self.QUANTITIES:
+            raise ChoiceError(quantity, self.QUANTITIES)
         self._quantity = quantity
 
     @property
@@ -89,6 +87,56 @@ class WaveWatch3URL:
     def month(self, month):
         self._date = datetime.date(self.year, month, self._date.day)
 
+
+class WaveWatch3URL(WaveWatch3URLBase):
+    SCHEME = "https"
+    NETLOC = "polar.ncep.noaa.gov"
+    PREFIX = "/waves/hindcasts/multi_1"
+
+    @property
+    def path(self):
+        path = (
+            self.PREFIX
+            / pathlib.PurePosixPath(f"{self.year}{self.month:02d}")
+            / "gribs"
+        )
+        return path / self.filename
+
     @property
     def filename(self):
         return f"multi_1.{self.region}.{self.quantity}.{self.year}{self.month:02d}.grb2"
+
+
+class WaveWatch3URLThredds(WaveWatch3URLBase):
+    SCHEME = "https"
+    NETLOC = "www.ncei.noaa.gov"
+    PREFIX = "/thredds-ocean/fileServer/ncep/nww3"
+
+    @property
+    def path(self):
+        path = self.PREFIX / pathlib.PurePosixPath(f"{self.year}", f"{self.month:02d}")
+        path /= self.region if self.year < 2017 else "gribs"
+        return path / self.filename
+
+    @property
+    def filename(self):
+        return f"multi_1.{self.region}.{self.quantity}.{self.year}{self.month:02d}.grb2"
+
+
+class WaveWatch3URLOld(WaveWatch3URLBase):
+    SCHEME = "https"
+    NETLOC = "polar.ncep.noaa.gov"
+    PREFIX = "/waves/hindcasts/nww3"
+
+    REGIONS = {"akw", "enp", "nah", "nph", "nww3", "wna"}
+
+    def __init__(self, date, quantity, region="nww3"):
+        super().__init__(date, quantity, region=region)
+
+    @property
+    def path(self):
+        return pathlib.PurePosixPath(self.PREFIX) / self.filename
+
+    @property
+    def filename(self):
+        return f"{self.region}.{self.quantity}.{self.year}{self.month:02d}.grb"
