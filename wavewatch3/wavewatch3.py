@@ -8,19 +8,35 @@ import xarray as xr
 from dateutil.relativedelta import relativedelta
 
 from .downloader import WaveWatch3Downloader
-from .url import WaveWatch3URL
+from .errors import ChoiceError
+from .url import WaveWatch3URL, WaveWatch3URLThredds
+
+
+SOURCES = {"multi_1": WaveWatch3URL, "multi_1-thredds": WaveWatch3URLThredds}
 
 
 class WaveWatch3:
-    def __init__(self, date, region="glo_30m", cache="~/.wavewatch3/data", lazy=True):
+    def __init__(
+        self,
+        date,
+        region="glo_30m",
+        cache="~/.wavewatch3/data",
+        lazy=True,
+        source="multi_1",
+    ):
+        try:
+            SourceURL = SOURCES[source]
+        except KeyError:
+            raise ChoiceError(source, SOURCES)
+        self._source = source
         self._cache = pathlib.Path(cache).expanduser()
         self._lazy = lazy
         self._data = None
         self._date = None
 
         self._urls = [
-            WaveWatch3URL(date, quantity=quantity, region=region)
-            for quantity in WaveWatch3URL.QUANTITIES
+            SourceURL(date, quantity=quantity, region=region)
+            for quantity in SourceURL.QUANTITIES
         ]
         self.date = date
         if not lazy:
@@ -31,6 +47,10 @@ class WaveWatch3:
         if self._data is None:
             self._load_data()
         return self._data
+
+    @property
+    def source(self):
+        return self._source
 
     @property
     def region(self):
