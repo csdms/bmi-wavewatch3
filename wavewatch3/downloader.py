@@ -4,23 +4,6 @@ import urllib.request
 
 
 class WaveWatch3Downloader:
-    SCHEME = "https"
-    NETLOC = "www.ncei.noaa.gov"
-    PREFIX = "/thredds-ocean/fileServer/ncep/nww3"
-
-    REGIONS = {
-        "glo_30m",
-        "ao_30m",
-        "at_10m",
-        "wc_10m",
-        "ep_10m",
-        "ak_10m",
-        "at_4m",
-        "wc_4m",
-        "ak_4m",
-    }
-    QUANTITIES = {"wind", "hs", "tp", "dp"}
-
     def __init__(self, url, force=False):
         self._url = url
         self._force = force
