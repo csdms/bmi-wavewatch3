@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
-from collections import defaultdict, namedtuple
+from collections import namedtuple
 from typing import Tuple
 
 import numpy
-import yaml
 from bmipy import Bmi
 
-from .downloader import WaveWatch3Downloader
+try:
+    import tomllib
+except ModuleNotFoundError:
+    import tomli as tomllib
+
+from .wavewatch3 import WaveWatch3
 
 BmiVar = namedtuple(
     "BmiVar", ["dtype", "itemsize", "nbytes", "units", "location", "grid"]
@@ -58,7 +62,7 @@ class BmiWaveWatch3(Bmi):
         float
             The current model time.
         """
-        return self._data.step[self._time_index]
+        return float(self._data.step[self._time_index]) * 1e-9 / 60 / 60
 
     def get_end_time(self) -> float:
         """End time of the model.
@@ -68,7 +72,7 @@ class BmiWaveWatch3(Bmi):
         float
             The maximum model time.
         """
-        return self._data.step[-1]
+        return float(self._data.step[-1]) * 1e-9 / 60 / 60
 
     def get_grid_edge_count(self, grid: int) -> int:
         """Get the number of edges in the grid.
@@ -311,7 +315,7 @@ class BmiWaveWatch3(Bmi):
         ndarray of float
             The input numpy array that holds the grid's column x-coordinates.
         """
-        x[:] = self._data.longitude.values
+        x[:] = self._data.longitude.data
         return x
 
     def get_grid_y(self, grid: int, y: numpy.ndarray) -> numpy.ndarray:
@@ -329,7 +333,7 @@ class BmiWaveWatch3(Bmi):
         ndarray of float
             The input numpy array that holds the grid's row y-coordinates.
         """
-        y[:] = self._data.latitude.values
+        y[:] = self._data.latitude.data
         return y
 
     def get_grid_z(self, grid: int, z: numpy.ndarray) -> numpy.ndarray:
@@ -503,13 +507,9 @@ class BmiWaveWatch3(Bmi):
         array_like
             A reference to a model variable.
         """
-        if name == self._data.u.standard_name:
-            array = self._data.u
-        elif name == self._data.v.standard_name:
-            array = self._data.v
-        else:
-            raise KeyError(name)
-        return array.values[self._time_index, ::-1, :]
+        local_name = self._standard_to_local_name[name]
+        array = self._data[local_name]
+        return numpy.asarray(array.data[self._time_index, :, :])
 
     def get_var_grid(self, name: str) -> int:
         """Get grid identifier for the given variable.
@@ -657,55 +657,28 @@ class BmiWaveWatch3(Bmi):
         recommended. A template of a model's configuration file
         with placeholder values is used by the BMI.
         """
-        with open(config_file, "r") as fp:
-            self._config = yaml.safe_load(fp).get("bmi-wavewatch3", {})
-        self._data = WaveWatch3Downloader.from_date(**self._config)
+        with open(config_file, "rb") as fp:
+            self._config = tomllib.load(fp)["wavewatch3"]
 
-        grids = defaultdict(list)
-        for name, var in self._data.data_vars.items():
-            shape = var.GRIB_Ny, var.GRIB_Nx
-            yx_spacing = (
-                var.GRIB_iDirectionIncrementInDegrees,
-                var.GRIB_jDirectionIncrementInDegrees,
-            )
-            yx_of_lower_left = (
-                var.GRIB_latitudeOfLastGridPointInDegrees,
-                var.GRIB_longitudeOfFirstGridPointInDegrees,
-            )
-            grids[(shape, yx_spacing, yx_of_lower_left)].append(name)
+        self._ww3 = WaveWatch3(self._config["date"], region=self._config["region"])
+        self._data = self._ww3.data
 
-        var_grid = {}
-        self._grid = {}
-        for gid, (args, vars) in enumerate(grids.items()):
-            self._grid[gid] = BmiGridUniformRectilinear(*args)
-            for var in vars:
-                var_grid[var] = gid
+        self._grid, var_to_id = _grids_from_dataset(self._data)
+        self._var = _vars_from_dataset(self._data, var_to_id)
+        self._time_index = 0
 
-        # self._grid = {
-        #     0: BmiGridUniformRectilinear(
-        #         shape=(self._data.sizes["latitude"], self._data.sizes["longitude"]),
-        #         yx_spacing=(latitude_spacing, longitude_spacing),
-        #         yx_of_lower_left=(
-        #             float(self._data.latitude.min().data),
-        #             float(self._data.longitude.min().data),
-        #         ),
-        #     )
-        # }
-
-        self._var = {}
-        for name, var in self._data.data_vars.items():
-            standard_name = (
-                var.standard_name if var.standard_name != "unknown" else name
-            )
-            self._var[standard_name] = BmiVar(
-                dtype=str(var.dtype),
-                itemsize=var.data.itemsize,
-                nbytes=var.data.nbytes,
-                location="node",
-                units=var.units,
-                grid=var_grid[name],
-            )
-        self._output_var_names = tuple(self._var)
+        self._standard_to_local_name = {
+            "wave_direction": "dirpw",  # Primary wave direction
+            "wave_period": "perpw",  # Primary wave mean period
+            "wave_height": "swh",  # Significant height of combined wind waves and swell
+            "eastward_wind_speed": "u",  # U component of wind (eastward_wind)
+            "northward_wind_speed": "v",  # V component of wind (northward_wind)
+        }
+        self._var = {
+            standard: self._var[local]
+            for standard, local in self._standard_to_local_name.items()
+        }
+        self._output_var_names = tuple(self._standard_to_local_name)
 
     def set_value(self, name: str, values: numpy.ndarray) -> None:
         """Specify a new value for a model variable.
@@ -760,3 +733,45 @@ class BmiWaveWatch3(Bmi):
             A model time later than the current model time.
         """
         raise NotImplementedError("update_until")
+
+
+def _grids_from_dataset(dataset):
+    var_to_grid = _var_grid(dataset)
+    id_to_grid = dict(enumerate(set(var_to_grid.values())))
+    grid_to_id = {v: k for k, v in id_to_grid.items()}
+
+    var_to_id = {var: grid_to_id[grid] for var, grid in var_to_grid.items()}
+
+    return id_to_grid, var_to_id
+
+
+def _var_grid(dataset):
+    var_to_grid = dict()
+    for name, var in dataset.data_vars.items():
+        shape = var.GRIB_Ny, var.GRIB_Nx
+        yx_spacing = (
+            var.GRIB_iDirectionIncrementInDegrees,
+            var.GRIB_jDirectionIncrementInDegrees,
+        )
+        yx_of_lower_left = (
+            var.GRIB_latitudeOfLastGridPointInDegrees,
+            var.GRIB_longitudeOfFirstGridPointInDegrees,
+        )
+        grid = BmiGridUniformRectilinear(shape, yx_spacing, yx_of_lower_left)
+
+        var_to_grid[name] = grid
+    return var_to_grid
+
+
+def _vars_from_dataset(dataset, var_to_gid):
+    vars = {}
+    for name, var in dataset.data_vars.items():
+        vars[name] = BmiVar(
+            dtype=str(var.dtype),
+            itemsize=var.data.itemsize,
+            nbytes=var.data[0, :, :].nbytes,
+            location="node",
+            units=var.units,
+            grid=var_to_gid[name],
+        )
+    return vars
