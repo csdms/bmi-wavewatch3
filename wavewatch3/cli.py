@@ -155,11 +155,14 @@ def clean(ctx, dry_run, cache_dir, yes):
     grid = "*"
     quantity = "*"
     date = "*"
-    pattern = f"{source}.{grid}.{quantity}.{date}.grb2"
 
     cache_dir = cache_dir.expanduser()
     cache_files = list(
-        itertools.chain(cache_dir.glob(pattern), cache_dir.glob(pattern + ".*.idx"))
+        itertools.chain(
+            cache_dir.glob(f"{source}.{grid}.{quantity}.{date}.grb2"),
+            cache_dir.glob(f"{source}.{grid}.{quantity}.{date}.grb2.gz"),
+            cache_dir.glob(f"{source}.{grid}.{quantity}.{date}.grb2.*.idx"),
+        )
     )
 
     total_bytes = sum([cache_file.stat().st_size for cache_file in cache_files])
