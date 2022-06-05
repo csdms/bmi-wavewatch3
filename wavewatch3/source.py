@@ -78,9 +78,13 @@ class _WaveWatch3Source:
     @date.setter
     def date(self, date):
         if self.MIN_DATE and date < self.MIN_DATE:
-            raise ValueError("date is less than minimum date for this dataset")
+            raise ValueError(
+                f"{date}: date is less than minimum date for this dataset ({self.MIN_DATE})"
+            )
         if self.MAX_DATE and date > self.MAX_DATE:
-            raise ValueError("date is greater than maximum date for this dataset")
+            raise ValueError(
+                f"{date}: date is greater than maximum date for this dataset ({self.MAX_DATE})"
+            )
         self._date = datetime.date.fromisoformat(date)
 
     @property
@@ -124,7 +128,8 @@ class WaveWatch3SourcePhase1(_WaveWatch3Source):
         "ak_10m",
         "ecg_4m",
         "ecg_10m",
-        "glo_30m_ext",
+        # "glo_30m_ext",
+        "glo_30m",
         "med_10m",
         "nsb_4m",
         "nsb_10m",
@@ -139,7 +144,7 @@ class WaveWatch3SourcePhase1(_WaveWatch3Source):
     MIN_DATE = "1979-01-01"
     MAX_DATE = "2009-12-31"
 
-    def __init__(self, date, quantity, grid="glo_30m_ext"):
+    def __init__(self, date, quantity, grid="glo_30m"):
         super().__init__(date, quantity, grid=grid)
 
     @property
@@ -286,7 +291,7 @@ class WaveWatch3SourceThredds(_WaveWatch3Source):
         return f"multi_1.{self.grid}.{self.quantity}.{self.year}{self.month:02d}.grb2"
 
 
-class WaveWatch3SourceNww3(_WaveWatch3Source):
+class WaveWatch3SourceSinglegrid(_WaveWatch3Source):
     """
     https://polar.ncep.noaa.gov/waves/hindcasts/prod-nww3.php
     """
@@ -318,4 +323,5 @@ SOURCES = {
     "multigrid-thredds": WaveWatch3SourceThredds,
     "phase1": WaveWatch3SourcePhase1,
     "phase2": WaveWatch3SourcePhase2,
+    "singlegrid": WaveWatch3SourceSinglegrid,
 }
