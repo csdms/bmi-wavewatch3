@@ -136,6 +136,9 @@ class WaveWatch3SourcePhase1(_WaveWatch3Source):
         "wc_10m",
     }
 
+    MIN_DATE = "1979-01-01"
+    MAX_DATE = "2009-12-31"
+
     def __init__(self, date, quantity, grid="glo_30m_ext"):
         super().__init__(date, quantity, grid=grid)
 
@@ -177,6 +180,9 @@ class WaveWatch3SourcePhase2(_WaveWatch3Source):
         "wc_10m",
     }
 
+    MIN_DATE = "1979-01-01"
+    MAX_DATE = "2009-12-31"
+
     def __init__(self, date, quantity, grid="glo_30m_ext"):
         super().__init__(date, quantity, grid=grid)
 
@@ -204,6 +210,9 @@ class WaveWatch3SourceMultigrid(_WaveWatch3Source):
     SCHEME = "https"
     NETLOC = "polar.ncep.noaa.gov"
     PREFIX = "/waves/hindcasts/multi_1"
+
+    MIN_DATE = "2005-02-01"
+    MAX_DATE = "2019-05-31"
 
     @property
     def path(self):
@@ -263,6 +272,9 @@ class WaveWatch3SourceThredds(_WaveWatch3Source):
     NETLOC = "www.ncei.noaa.gov"
     PREFIX = "/thredds-ocean/fileServer/ncep/nww3"
 
+    MIN_DATE = "2005-02-01"
+    MAX_DATE = "2019-05-31"
+
     @property
     def path(self):
         path = self.PREFIX / pathlib.PurePosixPath(f"{self.year}", f"{self.month:02d}")
@@ -285,6 +297,9 @@ class WaveWatch3SourceNww3(_WaveWatch3Source):
 
     GRIDS = {"akw", "enp", "nah", "nph", "nww3", "wna"}
 
+    MIN_DATE = "1999-07-01"
+    MAX_DATE = "2006-09-30"
+
     def __init__(self, date, quantity, grid="nww3"):
         super().__init__(date, quantity, grid=grid)
 
@@ -295,3 +310,12 @@ class WaveWatch3SourceNww3(_WaveWatch3Source):
     @property
     def filename(self):
         return f"{self.grid}.{self.quantity}.{self.year}{self.month:02d}.grb"
+
+
+SOURCES = {
+    "multigrid": WaveWatch3SourceMultigrid,
+    "multigrid-extended": WaveWatch3SourceMultigridExt,
+    "multigrid-thredds": WaveWatch3SourceThredds,
+    "phase1": WaveWatch3SourcePhase1,
+    "phase2": WaveWatch3SourcePhase2,
+}
