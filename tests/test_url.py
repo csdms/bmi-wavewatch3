@@ -53,9 +53,11 @@ def test_url_quantity_setter(source):
 @pytest.mark.parametrize("source", ww3.SOURCES)
 def test_url_grid_setter(source):
     Source = ww3.SOURCES[source]
+
     url = Source(Source.MIN_DATE, "tp")
-    url.grid = "ak_4m"
-    assert url == Source(Source.MIN_DATE, "tp", grid="ak_4m")
+    for grid in Source.GRIDS:
+        url.grid = grid
+        assert url == Source(Source.MIN_DATE, "tp", grid=grid)
 
     with pytest.raises(ww3.ChoiceError):
         url.grid = "bar"
