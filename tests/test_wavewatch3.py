@@ -6,7 +6,7 @@ def test_wavewatch3():
     assert ww3.date == "2010-05-22"
     assert ww3.year == 2010
     assert ww3.month == 5
-    assert ww3.region == "glo_30m"
+    assert ww3.grid == "glo_30m"
 
 
 def test_wavewatch3_inc():
@@ -27,12 +27,12 @@ def test_wavewatch3_inc():
 
 
 def test_wavewatch3_date():
-    ww3 = WaveWatch3("2001-01-01")
-    assert ww3.date == "2001-01-01"
+    ww3 = WaveWatch3("2006-01-01")
+    assert ww3.date == "2006-01-01"
 
-    ww3.date = "1973-03-14"
-    assert ww3.date == "1973-03-14"
-    assert (ww3.month, ww3.year) == (3, 1973)
+    ww3.date = "2005-03-14"
+    assert ww3.date == "2005-03-14"
+    assert (ww3.month, ww3.year) == (3, 2005)
 
 
 def test_repr():
@@ -41,9 +41,9 @@ def test_repr():
 
 
 def test_equivalent():
-    assert WaveWatch3("2008-12-31") == WaveWatch3("2008-12-31", region="glo_30m")
-    assert WaveWatch3("2008-12-31", region="ak_4m") != WaveWatch3(
-        "2008-12-31", region="glo_30m"
+    assert WaveWatch3("2008-12-31") == WaveWatch3("2008-12-31", grid="glo_30m")
+    assert WaveWatch3("2008-12-31", grid="ak_4m") != WaveWatch3(
+        "2008-12-31", grid="glo_30m"
     )
     assert WaveWatch3("2009-12-31") != WaveWatch3("2008-12-31")
     assert WaveWatch3("2009-12-31") == WaveWatch3("2009-12-01")
