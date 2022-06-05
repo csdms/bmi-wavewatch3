@@ -56,7 +56,7 @@ class _WaveWatch3Source:
 
     def __repr__(self):
         date = self._date.isoformat()
-        return f"WaveWatch3URL({date!r}, {self.quantity!r}, grid={self.grid!r})"
+        return f"{self.__class__.__module__}.{self.__class__.__name__}({date!r}, {self.quantity!r}, grid={self.grid!r})"
 
     def __eq__(self, other):
         return str(self) == str(other)
