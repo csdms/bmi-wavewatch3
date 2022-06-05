@@ -1,49 +1,61 @@
 import pytest
 
-from wavewatch3 import ChoiceError, WaveWatch3URL
+import wavewatch3 as ww3
 
 
-@pytest.mark.parametrize("region", WaveWatch3URL.REGIONS)
-@pytest.mark.parametrize("quantity", WaveWatch3URL.QUANTITIES)
-def test_url(region, quantity):
-    url = WaveWatch3URL("2010-05-22", quantity, region=region)
+@pytest.mark.parametrize("source", ["multigrid"])
+@pytest.mark.parametrize("grid", ww3.SOURCES["multigrid"].GRIDS)
+@pytest.mark.parametrize("quantity", ww3.SOURCES["multigrid"].QUANTITIES)
+def test_url(source, grid, quantity):
+    url = ww3.SOURCES[source]("2010-05-22", quantity, grid=grid)
     assert url.year == 2010
     assert url.month == 5
     assert url.quantity == quantity
-    assert url.region == region
-    assert url.filename == f"multi_1.{region}.{quantity}.201005.grb2"
+    assert url.grid == grid
+    assert url.filename == f"multi_1.{grid}.{quantity}.201005.grb2"
 
 
-@pytest.mark.parametrize("quantity", WaveWatch3URL.QUANTITIES)
-def test_url_default_region(quantity):
-    url = WaveWatch3URL("2010-05-22", quantity)
-    assert url.region == "glo_30m"
+@pytest.mark.parametrize("source", ["multigrid"])
+@pytest.mark.parametrize("quantity", ww3.SOURCES["multigrid"].QUANTITIES)
+def test_url_default_grid(source, quantity):
+    url = ww3.SOURCES[source]("2010-05-22", quantity)
+    assert url.grid == "glo_30m"
 
 
-def test_url_str():
-    url = WaveWatch3URL("2010-05-22", "wind")
-    assert str(url).startswith(WaveWatch3URL.SCHEME)
+@pytest.mark.parametrize("source", ww3.SOURCES)
+def test_url_str(source):
+    Source = ww3.SOURCES[source]
+    url = Source(Source.MIN_DATE, "wind")
+    assert str(url).startswith(Source.SCHEME)
 
 
-def test_url_repr():
-    url = WaveWatch3URL("2010-05-22", "tp")
+@pytest.mark.parametrize("source", ww3.SOURCES)
+def test_url_repr(source):
+    import wavewatch3  # noqa
+
+    Source = ww3.SOURCES[source]
+    url = Source(Source.MIN_DATE, "tp")
     assert eval(repr(url)) == url
 
 
-def test_url_quantity_setter():
-    url = WaveWatch3URL("2010-05-22", "tp")
+@pytest.mark.parametrize("source", ww3.SOURCES)
+def test_url_quantity_setter(source):
+    Source = ww3.SOURCES[source]
+    url = Source(Source.MIN_DATE, "tp")
     url.quantity = "dp"
     assert url.quantity == "dp"
-    assert url == WaveWatch3URL("2010-05-22", "dp")
+    assert url == Source(Source.MIN_DATE, "dp")
 
-    with pytest.raises(ChoiceError):
+    with pytest.raises(ww3.ChoiceError):
         url.quantity = "foo"
 
 
-def test_url_region_setter():
-    url = WaveWatch3URL("2010-05-22", "tp")
-    url.region = "ak_4m"
-    assert url == WaveWatch3URL("2010-05-22", "tp", region="ak_4m")
+@pytest.mark.parametrize("source", ww3.SOURCES)
+def test_url_grid_setter(source):
+    Source = ww3.SOURCES[source]
+    url = Source(Source.MIN_DATE, "tp")
+    url.grid = "ak_4m"
+    assert url == Source(Source.MIN_DATE, "tp", grid="ak_4m")
 
-    with pytest.raises(ChoiceError):
-        url.region = "bar"
+    with pytest.raises(ww3.ChoiceError):
+        url.grid = "bar"
