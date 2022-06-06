@@ -1,9 +1,30 @@
 import datetime
 import itertools
+import random
+import urllib
 
 import pytest
 
 import wavewatch3 as ww3
+
+
+def url_exists(url):
+    try:
+        with urllib.request.urlopen(url) as resp:
+            status_code = resp.status
+    except (urllib.error.HTTPError, urllib.error.URLError):
+        return False
+    else:
+        return status_code == 200
+
+
+def random_date(lower, upper):
+    lower = datetime.date.fromisoformat(lower)
+    upper = datetime.date.fromisoformat(upper)
+
+    range = (upper - lower).days
+
+    return (lower + datetime.timedelta(random.randrange(range))).isoformat()
 
 
 @pytest.mark.parametrize(
@@ -22,6 +43,39 @@ def test_url(source, grid, quantity):
     assert url.quantity == quantity
     assert url.grid == grid
     assert f"{grid}.{quantity}.{date.year}{date.month:02}.grb" in url.filename
+
+
+@pytest.mark.parametrize(
+    "source,grid,quantity",
+    [
+        (
+            _source,
+            random.choice(list(_source.GRIDS)),
+            random.choice(list(_source.QUANTITIES)),
+        )
+        for _source in ww3.SOURCES.values()
+    ],
+)
+def test_url_exists(source, grid, quantity):
+    """Spot check that urls exist"""
+    for date in [
+        source.MIN_DATE,
+        source.MAX_DATE,
+        random_date(source.MIN_DATE, source.MAX_DATE),
+    ]:
+        url = source(date, quantity, grid=grid)
+        assert url_exists(str(url))
+
+
+@pytest.mark.parametrize("source", ww3.SOURCES.values())
+def test_date_ranges(source):
+    for date in [
+        source.MIN_DATE,
+        source.MAX_DATE,
+        random_date(source.MIN_DATE, source.MAX_DATE),
+    ]:
+        url = source(date, random.choice(list(source.QUANTITIES)))
+        assert url.date == date
 
 
 @pytest.mark.parametrize(
