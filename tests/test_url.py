@@ -53,7 +53,9 @@ def test_url(source, grid, quantity):
             random.choice(list(_source.GRIDS)),
             random.choice(list(_source.QUANTITIES)),
         )
-        for _source in ww3.SOURCES.values()
+        for _source in itertools.filterfalse(
+            lambda cls: cls == ww3.SOURCES["phase1"], ww3.SOURCES.values()
+        )
     ],
 )
 def test_url_exists(source, grid, quantity):
