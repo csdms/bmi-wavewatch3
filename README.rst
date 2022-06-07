@@ -3,6 +3,10 @@ wavewatch3: Python interface to WAVEWATCH III
 
 .. image:: https://github.com/csdms/bmi-wavewatch3/workflows/Build/Test%20CI/badge.svg
 
+.. image:: https://github.com/csdms/bmi-wavewatch3/actions/workflows/test.yml/badge.svg
+   :target: https://github.com/csdms/bmi-wavewatch3/actions/workflows/test.yml
+   :alt: Test status
+
 .. image:: https://github.com/csdms/bmi-wavewatch3/workflows/Flake8/badge.svg
 
 .. image:: https://github.com/csdms/bmi-wavewatch3/workflows/Black/badge.svg
@@ -15,6 +19,7 @@ The *wavewatch3* Python package provides both a command line interface and a pro
 for downloading and working with `WAVEWATCH III`_ data.
 
 *wavewatch3* provides access to the following raster data sources,
+
 * 30 year wave hindcast `Phase 1`_
 * 30 year wave hindcast `Phase 2`_
 * Production hindcast Singlegrid_
@@ -43,13 +48,13 @@ Usage
 To get started, you can download *WAVEWATCH III* data by date with the *ww3* command
 (use `ww3 --help` to print a brief message),
 
-..code-block:: bash
+.. code-block:: bash
 
     $ ww3 fetch 2010-05-22
 
 You can also do this through Python,
 
-..code-block:: python
+.. code-block:: python
 
     >>> from wavewatch3 import WaveWatch3
     >>> WaveWatch3.fetch("2010-05-22")
@@ -66,6 +71,8 @@ presenting it as an *xarray* *Dataset*.
    ...
 
 Use the ``inc`` method to advance in time month-by-month,
+
+.. code-block:: python
 
    >>> ww3.date
    '2010-05-22'

@@ -1,4 +1,4 @@
-Changelog for wavewatch3
-========================
+Release Notes
+=============
 
 .. towncrier release notes start
