@@ -1,3 +1,4 @@
+import gzip
 import pathlib
 import urllib
 import urllib.request
@@ -23,7 +24,19 @@ class WaveWatch3Downloader:
             )
         else:
             filepath = filename
+
+        filepath = pathlib.Path(filepath)
+        if filepath.suffix == ".gz":
+            filepath = WaveWatch3Downloader.unzip(filepath)
         return pathlib.Path(filepath).absolute()
+
+    @staticmethod
+    def unzip(filepath):
+        filepath = pathlib.Path(filepath)
+        with gzip.open(filepath, "rb") as zip_file:
+            with open(filepath.stem, "wb") as fp:
+                fp.write(zip_file.read())
+        return pathlib.Path(filepath.stem)
 
     @property
     def filepath(self):
