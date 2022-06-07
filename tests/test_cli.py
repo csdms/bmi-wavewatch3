@@ -74,14 +74,14 @@ def test_info_is_toml():
     assert result.exit_code == 0
     sections = tomllib.loads(result.stdout)
     assert list(sections) == ["wavewatch3"]
-    assert list(sections["wavewatch3"]) == "sources"
+    assert list(sections["wavewatch3"]) == ["sources"]
     assert len(sections["wavewatch3"]["sources"]) == 1
 
     result = runner.invoke(ww3, ["info", "--all"])
     assert result.exit_code == 0
     sections = tomllib.loads(result.stdout)
     assert list(sections) == ["wavewatch3"]
-    assert list(sections["wavewatch3"]) == "sources"
+    assert list(sections["wavewatch3"]) == ["sources"]
     assert len(sections["wavewatch3"]["sources"]) > 1
 
 
