@@ -1,8 +1,6 @@
 wavewatch3: Python interface to WAVEWATCH III
 =============================================
 
-.. image:: https://github.com/csdms/bmi-wavewatch3/workflows/Build/Test%20CI/badge.svg
-
 .. image:: https://github.com/csdms/bmi-wavewatch3/actions/workflows/test.yml/badge.svg
    :target: https://github.com/csdms/bmi-wavewatch3/actions/workflows/test.yml
    :alt: Test status
