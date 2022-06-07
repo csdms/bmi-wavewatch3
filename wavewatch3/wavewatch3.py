@@ -84,6 +84,7 @@ class WaveWatch3:
             for url in self._urls:
                 url.month = new_date.month
                 url.year = new_date.year
+            self._data = None
             if not self._lazy:
                 self._load_data()
 
