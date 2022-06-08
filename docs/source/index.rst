@@ -1,14 +1,12 @@
 .. include:: ../../README.rst
-.. include:: ../../AUTHORS.rst
-.. include:: ../../CHANGES.rst
-.. include:: ../../LICENSE.rst
-
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-
+   Release Notes <changes>
+   Contributors <authors>
+   License <license>
 
 Indices and tables
 ==================
