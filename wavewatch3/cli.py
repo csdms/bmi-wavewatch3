@@ -204,6 +204,8 @@ def clean(ctx, dry_run, cache_dir, yes):
             cache_dir.glob(f"{source}.{grid}.{quantity}.{date}.grb2"),
             cache_dir.glob(f"{source}.{grid}.{quantity}.{date}.grb2.gz"),
             cache_dir.glob(f"{source}.{grid}.{quantity}.{date}.grb2.*.idx"),
+            cache_dir.glob(f"{grid}.{quantity}.{date}.grb"),
+            cache_dir.glob(f"{grid}.{quantity}.{date}.grb.*.idx"),
         )
     )
 
