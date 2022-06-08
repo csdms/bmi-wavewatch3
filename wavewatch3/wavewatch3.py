@@ -5,6 +5,7 @@ import pathlib
 from functools import partial
 from multiprocessing import Pool
 
+import numpy as np
 import xarray as xr
 from dateutil.relativedelta import relativedelta
 
@@ -46,6 +47,7 @@ class WaveWatch3:
         self._lazy = lazy
         self._data = None
         self._date = None
+        self._step = 0
 
         self._urls = [
             Source(date, quantity=quantity, grid=grid) for quantity in Source.QUANTITIES
@@ -62,6 +64,21 @@ class WaveWatch3:
         return self._data
 
     @property
+    def step(self):
+        return self._step
+
+    @step.setter
+    def step(self, step):
+        if step >= len(self.data.step):
+            remaining = step - len(self._data.step)
+            self.inc()
+            self.step = remaining
+        elif step < 0:
+            raise ValueError()
+        else:
+            self._step = step
+
+    @property
     def source(self):
         """Source from which data will be downloaded."""
         return self._source
@@ -74,11 +91,11 @@ class WaveWatch3:
     @property
     def date(self):
         """Current date as an isoformatted string."""
-        return self._date.isoformat()
+        return self._date.isoformat(timespec="hours")
 
     @date.setter
     def date(self, date):
-        new_date = datetime.date.fromisoformat(date)
+        new_date = datetime.datetime.fromisoformat(date)
         if new_date != self._date:
             self._date = new_date
             for url in self._urls:
@@ -98,8 +115,16 @@ class WaveWatch3:
         """The current month."""
         return self._date.month
 
+    @property
+    def day(self):
+        return self._date.day
+
+    @property
+    def hour(self):
+        return self._date.hour
+
     def inc(self, months=1):
-        """Increment to currrent date by some number of months.
+        """Increment to current date by some number of months.
 
         Parameters
         ----------
@@ -115,6 +140,9 @@ class WaveWatch3:
             [self._cache / url.filename for url in self._urls],
             engine="cfgrib",
             parallel=True,
+        )
+        self._step = np.searchsorted(
+            self._data.step, np.datetime64(self.date, "ns") - self._data.time
         )
 
     def _fetch_data(self):
