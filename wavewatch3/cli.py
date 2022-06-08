@@ -5,6 +5,7 @@ import pathlib
 import sys
 import textwrap
 import urllib
+from collections import namedtuple
 from functools import partial
 from multiprocessing import Pool, RLock
 
@@ -17,6 +18,9 @@ from .source import SOURCES
 
 out = partial(click.secho, bold=True, file=sys.stderr)
 err = partial(click.secho, fg="red", file=sys.stderr)
+
+
+DownloadResult = namedtuple("DownloadResult", ["remote", "local", "success", "status"])
 
 
 def validate_date(ctx, param, value):
@@ -173,9 +177,21 @@ def fetch(ctx, date, dry_run, force, file, grid, quantity):
             out(url)
 
     if not dry_run:
-        local_files = _retreive_urls(urls, disable=silent, force=force)
-        for local_file in local_files:
-            print(local_file.absolute())
+        results = _retreive_urls(urls, disable=silent, force=force)
+
+        if not silent:
+            [
+                out(f"{result.status}: {result.local}")
+                for result in results
+                if result.success and result.status
+            ]
+        [
+            err(f"{result.status}: {result.remote}")
+            for result in results
+            if not result.success
+        ]
+
+        [print(result.local) for result in results if result.success]
 
 
 @ww3.command()
@@ -249,13 +265,23 @@ def _retreive(position_and_url, disable=False, force=False):
             desc=name,
             position=position,
             disable=disable,
+            leave=False,
         ) as t:
-            WaveWatch3Downloader.retreive(url, filename=name, reporthook=t.update_to)
-            t.total = t.n
+            try:
+                WaveWatch3Downloader.retreive(
+                    url, filename=name, reporthook=t.update_to, force=force
+                )
+            except (urllib.error.HTTPError, urllib.error.URLError) as error:
+                success, status = False, str(error)
+            else:
+                t.total = t.n
+                success, status = True, f"downloaded {t.total} bytes"
     else:
-        out(f"cached: {name}")
+        success, status = True, "cached"
 
-    return pathlib.Path(name).absolute()
+    return DownloadResult(
+        local=pathlib.Path(name).absolute(), remote=url, success=success, status=status
+    )
 
 
 class TqdmUpTo(tqdm):
