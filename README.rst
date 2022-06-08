@@ -97,7 +97,7 @@ Example
 .. code:: python
 
    >>> from wavewatch3 import WaveWatch3
-   >>> ww3 = WaveWatch3("2010-05-22")
+   >>> ww3 = WaveWatch3("2009-11-08")
 
 The data can be accessed as an *xarray* *Dataset* through the ``data`` attribute.
 
@@ -105,20 +105,20 @@ The data can be accessed as an *xarray* *Dataset* through the ``data`` attribute
 
    >>> ww3.data
    <xarray.Dataset>
-   Dimensions:     (step: 249, latitude: 311, longitude: 720)
+   Dimensions:     (step: 241, latitude: 311, longitude: 720)
    Coordinates:
-       time        datetime64[ns] 2010-05-01
-     * step        (step) timedelta64[ns] 0 days 00:00:00 ... 31 days 00:00:00
+       time        datetime64[ns] 2009-11-01
+     * step        (step) timedelta64[ns] 0 days 00:00:00 ... 30 days 00:00:00
        surface     float64 1.0
      * latitude    (latitude) float64 77.5 77.0 76.5 76.0 ... -76.5 -77.0 -77.5
      * longitude   (longitude) float64 0.0 0.5 1.0 1.5 ... 358.0 358.5 359.0 359.5
-       valid_time  (step) datetime64[ns] dask.array<chunksize=(249,), meta=np.ndarray>
+       valid_time  (step) datetime64[ns] dask.array<chunksize=(241,), meta=np.ndarray>
    Data variables:
-       dirpw       (step, latitude, longitude) float32 dask.array<chunksize=(249, 311, 720), meta=np.ndarray>
-       perpw       (step, latitude, longitude) float32 dask.array<chunksize=(249, 311, 720), meta=np.ndarray>
-       swh         (step, latitude, longitude) float32 dask.array<chunksize=(249, 311, 720), meta=np.ndarray>
-       u           (step, latitude, longitude) float32 dask.array<chunksize=(249, 311, 720), meta=np.ndarray>
-       v           (step, latitude, longitude) float32 dask.array<chunksize=(249, 311, 720), meta=np.ndarray>
+       dirpw       (step, latitude, longitude) float32 dask.array<chunksize=(241, 311, 720), meta=np.ndarray>
+       perpw       (step, latitude, longitude) float32 dask.array<chunksize=(241, 311, 720), meta=np.ndarray>
+       swh         (step, latitude, longitude) float32 dask.array<chunksize=(241, 311, 720), meta=np.ndarray>
+       u           (step, latitude, longitude) float32 dask.array<chunksize=(241, 311, 720), meta=np.ndarray>
+       v           (step, latitude, longitude) float32 dask.array<chunksize=(241, 311, 720), meta=np.ndarray>
    Attributes:
        GRIB_edition:            2
        GRIB_centre:             kwbc
@@ -126,12 +126,15 @@ The data can be accessed as an *xarray* *Dataset* through the ``data`` attribute
        GRIB_subCentre:          0
        Conventions:             CF-1.7
        institution:             US National Weather Service - NCEP
-       history:                 2022-06-08T14:02 GRIB to CDM+CF via cfgrib-0.9.1...
+       history:                 2022-06-08T16:08 GRIB to CDM+CF via cfgrib-0.9.1...
 
-The ``step`` attribute points to the current time slice into the data,
+The ``step`` attribute points to the current time slice into the data (i.e number of three hour increments
+since the start of the month),
 
 .. code:: python
 
+   >>> ww3.step
+   56
    >>> ww3.data.swh[ww3.step, :, :].plot()
 
 .. image:: https://raw.githubusercontent.com/csdms/bmi-wavewatch3/main/docs/source/_static/ww3_global_swh.png
