@@ -28,7 +28,7 @@ All data sources provide both global and regional grids.
 Installation
 ------------
 
-*wavewatch3* can be installed by running `pip install wavewatch3`. It requires Python >= 3.8 to run.
+*wavewatch3* can be installed by running ``pip install wavewatch3``. It requires Python >= 3.8 to run.
 
 If you simply can't wait for the latest release, you can install *wavewatch3*
 directly from GitHub,
@@ -37,7 +37,7 @@ directly from GitHub,
 
    $ pip install git+https://github.com/csdms/bmi-wavewatch3
 
-*wavewatch3* is also available through *conda*, `conda install wavewatch3 -c conda-forge`.
+*wavewatch3* is also available through *conda*, ``conda install wavewatch3 -c conda-forge``.
 
 
 Usage
@@ -48,7 +48,7 @@ To get started, you can download *WAVEWATCH III* data by date with the *ww3* com
 
 .. code-block:: bash
 
-    $ ww3 fetch 2010-05-22
+    $ ww3 fetch "2010-05-22"
 
 You can also do this through Python,
 
