@@ -39,6 +39,9 @@ jobs:
           conda info
           conda list
 
+      - name: Install package
+        run: pip instal -e .
+        
       - name: Build source distribution
         run: |
           pip install twine
