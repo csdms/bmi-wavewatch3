@@ -40,7 +40,7 @@ jobs:
           conda list
 
       - name: Install package
-        run: pip instal -e .
+        run: pip install -e .
         
       - name: Build source distribution
         run: |
