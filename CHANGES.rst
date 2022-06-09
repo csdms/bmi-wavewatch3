@@ -1,4 +1,2 @@
-Release Notes
-=============
-
-.. towncrier release notes start
+0.1.0b1 (2022-06-09)
+--------------------
