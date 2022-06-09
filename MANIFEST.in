@@ -1,0 +1,4 @@
+include CHANGES.rst
+
+recursive-exclude docs *
+recursive-exclude news *

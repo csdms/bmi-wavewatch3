@@ -32,7 +32,7 @@ All data sources provide both global and regional grids.
 Installation
 ------------
 
-*bmi_wavewatch3* can be installed by running ``pip install bmi_wavewatch3``. It requires Python >= 3.8 to run.
+*bmi_wavewatch3* can be installed by running ``pip install bmi-wavewatch3``. It requires Python >= 3.8 to run.
 
 If you simply can't wait for the latest release, you can install *bmi_wavewatch3*
 directly from GitHub,
@@ -41,7 +41,7 @@ directly from GitHub,
 
    $ pip install git+https://github.com/csdms/bmi-wavewatch3
 
-*bmi_wavewatch3* is also available through *conda*, ``conda install bmi_wavewatch3 -c conda-forge``.
+*bmi_wavewatch3* is also available through *conda*, ``conda install bmi-wavewatch3 -c conda-forge``.
 
 
 Usage
