@@ -34,14 +34,16 @@ jobs:
           channels: conda-forge
           channel-priority: true
 
+      - name: Install package
+        run: |
+          pip install setuptools
+          pip install -e .
+        
       - name: Show conda installation info
         run: |
           conda info
           conda list
 
-      - name: Install package
-        run: pip install -e .
-        
       - name: Build source distribution
         run: |
           pip install twine
