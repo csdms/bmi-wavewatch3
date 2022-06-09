@@ -5,17 +5,58 @@ import pathlib
 import sys
 import textwrap
 import urllib
+from collections import namedtuple
 from functools import partial
 from multiprocessing import Pool, RLock
 
 import click
 from tqdm.auto import tqdm
 from .downloader import WaveWatch3Downloader
+from .errors import ChoiceError, DateValueError
 from .source import SOURCES
 
 
 out = partial(click.secho, bold=True, file=sys.stderr)
 err = partial(click.secho, fg="red", file=sys.stderr)
+
+
+DownloadResult = namedtuple("DownloadResult", ["remote", "local", "success", "status"])
+
+
+def validate_date(ctx, param, value):
+    source = SOURCES[ctx.parent.params["source"]]
+
+    for date_str in value:
+        try:
+            source.validate_date(date_str)
+        except DateValueError as error:
+            raise click.BadParameter(error)
+    return value
+
+
+def validate_quantity(ctx, param, value):
+    source = SOURCES[ctx.parent.params["source"]]
+    if not value:
+        return sorted(source.QUANTITIES)
+
+    for quantity in value:
+        try:
+            source.validate_quantity(quantity)
+        except ChoiceError as error:
+            raise click.BadParameter(error)
+    return value
+
+
+def validate_grid(ctx, param, value):
+    source = SOURCES[ctx.parent.params["source"]]
+    if not value:
+        return inspect.signature(source).parameters["grid"].default
+
+    try:
+        source.validate_grid(value)
+    except ChoiceError as error:
+        raise click.BadParameter(error)
+    return value
 
 
 @click.group(chain=True)
@@ -82,23 +123,27 @@ def info(ctx, all):
 
 
 @ww3.command()
-@click.argument("date", nargs=-1)
-@click.option("--grid", default=None, help="Grid to download")
-@click.option("--quantity", "-q", multiple=True, help="Quantity to download")
+@click.argument("date", nargs=-1, callback=validate_date)
+@click.option("--grid", default=None, help="Grid to download", callback=validate_grid)
+@click.option(
+    "--quantity",
+    "-q",
+    multiple=True,
+    help="Quantity to download",
+    callback=validate_quantity,
+)
 @click.pass_context
 def url(ctx, date, grid, quantity):
     """Construct URLs from which to download WAVEWATCH III data."""
     Source = SOURCES[ctx.parent.params["source"]]
-    quantity = sorted(Source.QUANTITIES) if not quantity else quantity
 
-    grid = inspect.signature(Source).parameters["grid"].default if not grid else grid
     for d in date:
         for q in quantity:
             print(Source(d, q, grid=grid))
 
 
 @ww3.command()
-@click.argument("date", nargs=-1)
+@click.argument("date", nargs=-1, callback=validate_date)
 @click.option("--dry-run", is_flag=True, help="do not actually download data")
 @click.option(
     "--force",
@@ -107,33 +152,46 @@ def url(ctx, date, grid, quantity):
     help="force download even if local file already exists",
 )
 @click.option("--file", type=click.File("r", lazy=False), help="read dates from a file")
-@click.option("--grid", default=None, help="Grid to download")
-@click.option("--quantity", "-q", multiple=True, help="Quantity to download")
+@click.option("--grid", default=None, help="Grid to download", callback=validate_grid)
+@click.option(
+    "--quantity",
+    "-q",
+    multiple=True,
+    help="Quantity to download",
+    callback=validate_quantity,
+)
 @click.pass_context
 def fetch(ctx, date, dry_run, force, file, grid, quantity):
     """Download WAVEWATCH III data by date."""
     verbose = ctx.parent.params["verbose"]
     silent = ctx.parent.params["silent"]
     Source = SOURCES[ctx.parent.params["source"]]
-    quantity = sorted(Source.QUANTITIES) if not quantity else quantity
-    grid = inspect.signature(Source).parameters["grid"].default if not grid else grid
 
     if file:
         date += file.read().splitlines()
 
-    urls = []
-    for d in date:
-        for q in quantity:
-            urls.append(str(Source(d, q, grid=grid)))
+    urls = [str(Source(d, q, grid=grid)) for q in quantity for d in date]
 
     if not silent and verbose:
         for url in urls:
             out(url)
 
     if not dry_run:
-        local_files = _retreive_urls(urls, disable=silent, force=force)
-        for local_file in local_files:
-            print(local_file.absolute())
+        results = _retreive_urls(urls, disable=silent, force=force)
+
+        if not silent:
+            [
+                out(f"{result.status}: {result.local}")
+                for result in results
+                if result.success and result.status
+            ]
+        [
+            err(f"{result.status}: {result.remote}")
+            for result in results
+            if not result.success
+        ]
+
+        [print(result.local) for result in results if result.success]
 
 
 @ww3.command()
@@ -162,6 +220,8 @@ def clean(ctx, dry_run, cache_dir, yes):
             cache_dir.glob(f"{source}.{grid}.{quantity}.{date}.grb2"),
             cache_dir.glob(f"{source}.{grid}.{quantity}.{date}.grb2.gz"),
             cache_dir.glob(f"{source}.{grid}.{quantity}.{date}.grb2.*.idx"),
+            cache_dir.glob(f"{grid}.{quantity}.{date}.grb"),
+            cache_dir.glob(f"{grid}.{quantity}.{date}.grb.*.idx"),
         )
     )
 
@@ -205,13 +265,23 @@ def _retreive(position_and_url, disable=False, force=False):
             desc=name,
             position=position,
             disable=disable,
+            leave=False,
         ) as t:
-            WaveWatch3Downloader.retreive(url, filename=name, reporthook=t.update_to)
-            t.total = t.n
+            try:
+                WaveWatch3Downloader.retreive(
+                    url, filename=name, reporthook=t.update_to, force=force
+                )
+            except (urllib.error.HTTPError, urllib.error.URLError) as error:
+                success, status = False, str(error)
+            else:
+                t.total = t.n
+                success, status = True, f"downloaded {t.total} bytes"
     else:
-        out(f"cached: {name}")
+        success, status = True, "cached"
 
-    return pathlib.Path(name).absolute()
+    return DownloadResult(
+        local=pathlib.Path(name).absolute(), remote=url, success=success, status=status
+    )
 
 
 class TqdmUpTo(tqdm):

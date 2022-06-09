@@ -660,7 +660,11 @@ class BmiWaveWatch3(Bmi):
         with open(config_file, "rb") as fp:
             self._config = tomllib.load(fp)["wavewatch3"]
 
-        self._ww3 = WaveWatch3(self._config["date"], region=self._config["region"])
+        self._ww3 = WaveWatch3(
+            self._config["date"],
+            grid=self._config["grid"],
+            source=self._config["source"],
+        )
         self._data = self._ww3.data
 
         self._grid, var_to_id = _grids_from_dataset(self._data)

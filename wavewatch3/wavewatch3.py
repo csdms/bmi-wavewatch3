@@ -5,6 +5,7 @@ import pathlib
 from functools import partial
 from multiprocessing import Pool
 
+import numpy as np
 import xarray as xr
 from dateutil.relativedelta import relativedelta
 
@@ -46,6 +47,7 @@ class WaveWatch3:
         self._lazy = lazy
         self._data = None
         self._date = None
+        self._step = 0
 
         self._urls = [
             Source(date, quantity=quantity, grid=grid) for quantity in Source.QUANTITIES
@@ -62,6 +64,25 @@ class WaveWatch3:
         return self._data
 
     @property
+    def step(self):
+        return self._step
+
+    @step.setter
+    def step(self, step):
+        if step < 0:
+            raise ValueError("step must be non-negative")
+
+        if step < len(self.data.step):
+            self._step = step
+            self.date = str(
+                (self.data.time + self.data.step[step]).values.astype("datetime64[h]")
+            )
+        else:
+            remaining = step - len(self._data.step)
+            self.inc()
+            self.step = remaining
+
+    @property
     def source(self):
         """Source from which data will be downloaded."""
         return self._source
@@ -74,16 +95,17 @@ class WaveWatch3:
     @property
     def date(self):
         """Current date as an isoformatted string."""
-        return self._date.isoformat()
+        return self._date.isoformat(timespec="hours")
 
     @date.setter
     def date(self, date):
-        new_date = datetime.date.fromisoformat(date)
+        new_date = datetime.datetime.fromisoformat(date)
         if new_date != self._date:
             self._date = new_date
             for url in self._urls:
                 url.month = new_date.month
                 url.year = new_date.year
+            self._data = None
             if not self._lazy:
                 self._load_data()
 
@@ -97,8 +119,16 @@ class WaveWatch3:
         """The current month."""
         return self._date.month
 
+    @property
+    def day(self):
+        return self._date.day
+
+    @property
+    def hour(self):
+        return self._date.hour
+
     def inc(self, months=1):
-        """Increment to currrent date by some number of months.
+        """Increment to current date by some number of months.
 
         Parameters
         ----------
@@ -115,6 +145,9 @@ class WaveWatch3:
             engine="cfgrib",
             parallel=True,
         )
+        self._step = np.searchsorted(
+            self._data.step, np.datetime64(self.date, "ns") - self._data.time
+        )
 
     def _fetch_data(self):
         """Download data in parallel."""
@@ -124,9 +157,7 @@ class WaveWatch3:
 
     def __repr__(self):
         """String representation of a WaveWatch3 instance."""
-        date = self._urls[0]._date.isoformat()
-        grid = self._urls[0].grid
-        return f"WaveWatch3({date!r}, grid={grid!r})"
+        return f"WaveWatch3({self.date!r}, grid={self.grid!r}, source={self.source!r})"
 
     def __eq__(self, other):
         """Test if two WaveWatch3 instances refer to the same data."""
@@ -134,6 +165,7 @@ class WaveWatch3:
             self.month == other.month
             and self.year == other.year
             and self.grid == other.grid
+            and self.source == other.source
         )
 
     @staticmethod

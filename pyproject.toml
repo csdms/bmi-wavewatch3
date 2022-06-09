@@ -59,6 +59,10 @@ testing = [
   "coveralls",
   "pytest",
   "pytest-cov",
+  "tomli",
+]
+doc = [
+  "sphinx"
 ]
 
 

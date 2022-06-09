@@ -2,7 +2,7 @@ import datetime
 import pathlib
 import urllib
 
-from .errors import ChoiceError
+from .errors import ChoiceError, DateValueError
 
 
 class _WaveWatch3Source:
@@ -26,13 +26,9 @@ class _WaveWatch3Source:
     MAX_DATE = None
 
     def __init__(self, date, quantity, grid="glo_30m"):
-        self._date = None
-        self._quantity = None
-        self._grid = None
-
-        self.date = date
-        self.quantity = quantity
-        self.grid = grid
+        self._date = datetime.datetime.fromisoformat(self.validate_date(date))
+        self._quantity = self.validate_quantity(quantity)
+        self._grid = self.validate_grid(grid)
 
     @property
     def path(self):
@@ -67,25 +63,16 @@ class _WaveWatch3Source:
 
     @grid.setter
     def grid(self, grid):
-        if grid not in self.GRIDS:
-            raise ChoiceError(grid, self.GRIDS)
+        self.validate_grid(grid)
         self._grid = grid
 
     @property
     def date(self):
-        return self._date.isoformat()
+        return self._date.isoformat(timespec="hours")
 
     @date.setter
     def date(self, date):
-        if self.MIN_DATE and date < self.MIN_DATE:
-            raise ValueError(
-                f"{date}: date is less than minimum date for this dataset ({self.MIN_DATE})"
-            )
-        if self.MAX_DATE and date > self.MAX_DATE:
-            raise ValueError(
-                f"{date}: date is greater than maximum date for this dataset ({self.MAX_DATE})"
-            )
-        self._date = datetime.date.fromisoformat(date)
+        self._date = datetime.datetime.fromisoformat(self.validate_date(date))
 
     @property
     def quantity(self):
@@ -93,9 +80,7 @@ class _WaveWatch3Source:
 
     @quantity.setter
     def quantity(self, quantity):
-        if quantity not in self.QUANTITIES:
-            raise ChoiceError(quantity, self.QUANTITIES)
-        self._quantity = quantity
+        self._quantity = self.validate_quantity(quantity)
 
     @property
     def year(self):
@@ -103,7 +88,10 @@ class _WaveWatch3Source:
 
     @year.setter
     def year(self, year):
-        self._date = datetime.date(year, self.month, self._date.day)
+        try:
+            self._date = datetime.date(year, self.month, self._date.day)
+        except ValueError as error:
+            raise DateValueError(str(error))
 
     @property
     def month(self):
@@ -111,7 +99,48 @@ class _WaveWatch3Source:
 
     @month.setter
     def month(self, month):
-        self._date = datetime.date(self.year, month, self._date.day)
+        try:
+            self._date = datetime.datetime(self.year, month, self._date.day)
+        except ValueError as error:
+            raise DateValueError(str(error))
+
+    @classmethod
+    def validate_quantity(cls, quantity):
+        if quantity not in cls.QUANTITIES:
+            raise ChoiceError(quantity, cls.QUANTITIES)
+        return quantity
+
+    @classmethod
+    def validate_grid(cls, grid):
+        if grid not in cls.GRIDS:
+            raise ChoiceError(grid, cls.GRIDS)
+        return grid
+
+    @classmethod
+    def validate_date(cls, date):
+        try:
+            datetime.datetime.fromisoformat(date)
+        except ValueError as error:
+            raise DateValueError(error)
+        date_in_range_or_raise(date, lower=cls.MIN_DATE, upper=cls.MAX_DATE)
+
+        return date
+
+
+def date_in_range_or_raise(date, lower=None, upper=None):
+    date = datetime.datetime.fromisoformat(date)
+
+    lower = datetime.datetime.fromisoformat(lower) if lower else lower
+    if lower and date < lower:
+        raise DateValueError(
+            f"{date}: date is less than minimum date for this dataset ({lower})"
+        )
+
+    upper = datetime.datetime.fromisoformat(upper) if upper else upper
+    if upper and date > upper:
+        raise DateValueError(
+            f"{date}: date is greater than maximum date for this dataset ({upper})"
+        )
 
 
 class WaveWatch3SourcePhase1(_WaveWatch3Source):
