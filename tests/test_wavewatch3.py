@@ -1,4 +1,4 @@
-from wavewatch3 import WaveWatch3
+from bmi_wavewatch3 import WaveWatch3
 
 
 def test_wavewatch3():

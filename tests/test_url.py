@@ -5,7 +5,7 @@ import urllib
 
 import pytest
 
-import wavewatch3 as ww3
+import bmi_wavewatch3 as ww3
 
 
 def url_exists(url):
@@ -109,7 +109,7 @@ def test_url_str(source):
 
 @pytest.mark.parametrize("source", ww3.SOURCES.values())
 def test_url_repr(source):
-    import wavewatch3  # noqa
+    import bmi_wavewatch3  # noqa
 
     url = source(source.MIN_DATE, "tp")
     assert eval(repr(url)) == url

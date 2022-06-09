@@ -17,7 +17,7 @@
 
 # -- Project information -----------------------------------------------------
 
-project = "wavewatch3"
+project = "bmi_wavewatch3"
 copyright = "2022, Eric Hutton"
 author = "Eric Hutton"
 
@@ -56,15 +56,15 @@ html_theme = "alabaster"
 html_static_path = ["_static"]
 
 html_theme_options = {
-    "description": "WAVEWATCH III datasets in Python.",
+    "description": "WAVEWATCH III data in Python",
     "logo": "wavewatch3_logo.png",
     "logo_name": False,
     "github_user": "csdms",
-    "github_repo": "wavewatch3",
+    "github_repo": "bmi-wavewatch3",
     "extra_nav_links": {
         "WAVEWATCH III": "https://polar.ncep.noaa.gov/waves",
-        "wavewatch3 @ GitHub": "https://github.com/csdms/wavewatch3/",
-        "Contact Us": "https://github.com/csdms/wavewatch3/issues",
+        "bmi-wavewatch3 @ GitHub": "https://github.com/csdms/bmi-wavewatch3/",
+        "Contact Us": "https://github.com/csdms/bmi-wavewatch3/issues",
     },
 }
 

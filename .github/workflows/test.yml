@@ -49,8 +49,8 @@ jobs:
         env:
           HYPOTHESIS_PROFILE: "ci"
         run: |
-          python -c 'import wavewatch3; print(wavewatch3.__version__)'
-          pytest --cov=wavewatch3 --cov-report=xml:$(pwd)/coverage.xml -vvv
+          python -c 'import bmi_wavewatch3; print(bmi_wavewatch3.__version__)'
+          pytest --cov=bmi_wavewatch3 --cov-report=xml:$(pwd)/coverage.xml -vvv
 
       - name: Coveralls
         if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'

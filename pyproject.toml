@@ -3,7 +3,7 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "wavewatch3"
+name = "bmi_wavewatch3"
 description = "Fetch WaveWatch3 data."
 authors = [
   {email = "mcflugen@gmail.com"},
@@ -67,7 +67,7 @@ doc = [
 
 
 [project.scripts]
-ww3 = "wavewatch3.cli:ww3"
+ww3 = "bmi_wavewatch3.cli:ww3"
 
 
 [tool.setuptools.packages.find]
@@ -75,11 +75,11 @@ where = ["."]
 
 [tool.setuptools.dynamic]
 readme = {file = ["README.rst", "AUTHORS.rst", "CHANGES.rst"]}
-version = {attr = "wavewatch3._version.__version__"}
+version = {attr = "bmi_wavewatch3._version.__version__"}
 
 [tool.pytest.ini_options]
 minversion = "6.0"
-testpaths = ["wavewatch3", "tests"]
+testpaths = ["bmi_wavewatch3", "tests"]
 norecursedirs = [".*", "*.egg*", "build", "dist", "examples"]
 addopts = """
   --ignore setup.py
@@ -104,11 +104,11 @@ line_length = 88
 
 [tool.towncrier]
 directory = "news"
-package = "wavewatch3"
+package = "bmi_wavewatch3"
 filename = "CHANGES.rst"
 single_file = true
 underlines = "-`^"
-issue_format = "`#{issue} <https://github.com/csdms/bmi-wave-watch-3/issues/{issue}>`_"
+issue_format = "`#{issue} <https://github.com/csdms/bmi-wavewatch3/issues/{issue}>`_"
 title_format = "{version} ({project_date})"
 
 [[tool.towncrier.type]]
