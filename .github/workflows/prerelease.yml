@@ -32,9 +32,12 @@ jobs:
       - name: Install package
         run: |
           pip install -e .
-        
-      - name: Build source distribution
-        run: |
           pip install twine
+        
+      - name: Create source distribution
+        run: |
           python setup.py sdist --dist-dir wheelhouse
+        
+      - name: Upload source distribution
+        run: |
           twine upload --skip-existing wheelhouse/*.tar.gz
