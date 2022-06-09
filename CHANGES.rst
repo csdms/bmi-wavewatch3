@@ -1,8 +1,4 @@
-0.1.0b2 (unreleased)
---------------------
+Release Notes
+=============
 
-- Nothing changed yet.
-
-
-0.1.0b1 (2022-06-09)
---------------------
+.. towncrier release notes start
