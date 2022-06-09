@@ -13,7 +13,7 @@ env:
 jobs:
   build-and-publish:
     name: Build and publish to TestPyPI
-    runs-on: linux-latest
+    runs-on: ubuntu-latest
 
     defaults:
       run:
