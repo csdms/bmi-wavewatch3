@@ -26,7 +26,7 @@ class _WaveWatch3Source:
     MAX_DATE = None
 
     def __init__(self, date, quantity, grid="glo_30m"):
-        self._date = datetime.date.fromisoformat(date)
+        self._date = datetime.datetime.fromisoformat(self.validate_date(date))
         self._quantity = self.validate_quantity(quantity)
         self._grid = self.validate_grid(grid)
 
@@ -68,11 +68,11 @@ class _WaveWatch3Source:
 
     @property
     def date(self):
-        return self._date.isoformat()
+        return self._date.isoformat(timespec="hours")
 
     @date.setter
     def date(self, date):
-        self._date = datetime.date.fromisoformat(self.validate_date(date))
+        self._date = datetime.datetime.fromisoformat(self.validate_date(date))
 
     @property
     def quantity(self):
@@ -88,7 +88,10 @@ class _WaveWatch3Source:
 
     @year.setter
     def year(self, year):
-        self._date = datetime.date(year, self.month, self._date.day)
+        try:
+            self._date = datetime.date(year, self.month, self._date.day)
+        except ValueError as error:
+            raise DateValueError(str(error))
 
     @property
     def month(self):
@@ -96,7 +99,10 @@ class _WaveWatch3Source:
 
     @month.setter
     def month(self, month):
-        self._date = datetime.date(self.year, month, self._date.day)
+        try:
+            self._date = datetime.datetime(self.year, month, self._date.day)
+        except ValueError as error:
+            raise DateValueError(str(error))
 
     @classmethod
     def validate_quantity(cls, quantity):
@@ -113,18 +119,28 @@ class _WaveWatch3Source:
     @classmethod
     def validate_date(cls, date):
         try:
-            datetime.date.fromisoformat(date)
+            datetime.datetime.fromisoformat(date)
         except ValueError as error:
-            raise DateValueError(str(error))
-        if cls.MIN_DATE and date < cls.MIN_DATE:
-            raise DateValueError(
-                f"{date}: date is less than minimum date for this dataset ({cls.MIN_DATE})"
-            )
-        if cls.MAX_DATE and date > cls.MAX_DATE:
-            raise DateValueError(
-                f"{date}: date is greater than maximum date for this dataset ({cls.MAX_DATE})"
-            )
+            raise DateValueError(error)
+        date_in_range_or_raise(date, lower=cls.MIN_DATE, upper=cls.MAX_DATE)
+
         return date
+
+
+def date_in_range_or_raise(date, lower=None, upper=None):
+    date = datetime.datetime.fromisoformat(date)
+
+    lower = datetime.datetime.fromisoformat(lower) if lower else lower
+    if lower and date < lower:
+        raise DateValueError(
+            f"{date}: date is less than minimum date for this dataset ({lower})"
+        )
+
+    upper = datetime.datetime.fromisoformat(upper) if upper else upper
+    if upper and date > upper:
+        raise DateValueError(
+            f"{date}: date is greater than maximum date for this dataset ({upper})"
+        )
 
 
 class WaveWatch3SourcePhase1(_WaveWatch3Source):

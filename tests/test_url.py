@@ -77,8 +77,15 @@ def test_date_ranges(source):
         source.MAX_DATE,
         random_date(source.MIN_DATE, source.MAX_DATE),
     ]:
-        url = source(date, random.choice(list(source.QUANTITIES)))
-        assert url.date == date
+        date = datetime.datetime.fromisoformat(date)
+
+        url = source(date.isoformat(), random.choice(list(source.QUANTITIES)))
+        assert url.date == date.isoformat(timespec="hours")
+
+        url = source(
+            date.isoformat(timespec="hours"), random.choice(list(source.QUANTITIES))
+        )
+        assert url.date == date.isoformat(timespec="hours")
 
 
 @pytest.mark.parametrize(
