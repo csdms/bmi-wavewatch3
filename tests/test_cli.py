@@ -3,7 +3,7 @@ import pathlib
 import pytest
 from click.testing import CliRunner
 
-from wavewatch3.cli import ww3
+from bmi_wavewatch3.cli import ww3
 
 try:
     import tomllib

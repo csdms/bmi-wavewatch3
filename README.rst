@@ -1,6 +1,3 @@
-wavewatch3: Python interface to WAVEWATCH III
-=============================================
-
 .. image:: https://github.com/csdms/bmi-wavewatch3/actions/workflows/test.yml/badge.svg
    :target: https://github.com/csdms/bmi-wavewatch3/actions/workflows/test.yml
    :alt: Test status
@@ -9,14 +6,21 @@ wavewatch3: Python interface to WAVEWATCH III
 
 .. image:: https://github.com/csdms/bmi-wavewatch3/workflows/Black/badge.svg
 
+.. image:: https://github.com/csdms/bmi-wavewatch3/raw/main/docs/source/_static/wavewatch3_logo.png
+   :target: https://github.com/csdms/bmi-wavewatch3
+   :alt: Python interface to WAVEWATCH III data
+
+A Python interface to WAVEWATCH III data
+========================================
+
 
 About
 -----
 
-The *wavewatch3* Python package provides both a command line interface and a programming interface
+The *bmi_wavewatch3* Python package provides both a command line interface and a programming interface
 for downloading and working with `WAVEWATCH III`_ data.
 
-*wavewatch3* provides access to the following raster data sources,
+*bmi_wavewatch3* provides access to the following raster data sources,
 
 * 30 year wave hindcast `Phase 1`_
 * 30 year wave hindcast `Phase 2`_
@@ -28,16 +32,16 @@ All data sources provide both global and regional grids.
 Installation
 ------------
 
-*wavewatch3* can be installed by running ``pip install wavewatch3``. It requires Python >= 3.8 to run.
+*bmi_wavewatch3* can be installed by running ``pip install bmi_wavewatch3``. It requires Python >= 3.8 to run.
 
-If you simply can't wait for the latest release, you can install *wavewatch3*
+If you simply can't wait for the latest release, you can install *bmi_wavewatch3*
 directly from GitHub,
 
 .. code-block:: bash
 
    $ pip install git+https://github.com/csdms/bmi-wavewatch3
 
-*wavewatch3* is also available through *conda*, ``conda install wavewatch3 -c conda-forge``.
+*bmi_wavewatch3* is also available through *conda*, ``conda install bmi_wavewatch3 -c conda-forge``.
 
 
 Usage
@@ -54,15 +58,15 @@ You can also do this through Python,
 
 .. code-block:: python
 
-    >>> from wavewatch3 import WaveWatch3
+    >>> from bmi_wavewatch3 import WaveWatch3
     >>> WaveWatch3.fetch("2010-05-22")
 
-The *wavewatch3* package provides the ``WaveWatch3`` class for downloading data and
+The *bmi_wavewatch3* package provides the ``WaveWatch3`` class for downloading data and
 presenting it as an *xarray* *Dataset*.
 
 .. code-block:: python
 
-   >>> from wavewatch3 import WaveWatch3
+   >>> from bmi_wavewatch3 import WaveWatch3
    >>> ww3 = WaveWatch3("2010-05-22")
    >>> ww3.data
    <xarray.Dataset>
@@ -96,7 +100,7 @@ Example
 
 .. code:: python
 
-   >>> from wavewatch3 import WaveWatch3
+   >>> from bmi_wavewatch3 import WaveWatch3
    >>> ww3 = WaveWatch3("2009-11-08")
 
 The data can be accessed as an *xarray* *Dataset* through the ``data`` attribute.

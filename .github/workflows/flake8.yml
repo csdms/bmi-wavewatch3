@@ -24,4 +24,4 @@ jobs:
       - name: Lint
         run: |
           pip install flake8
-          flake8 wavewatch3 tests
+          flake8 bmi_wavewatch3 tests
