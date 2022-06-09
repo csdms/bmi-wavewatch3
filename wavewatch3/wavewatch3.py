@@ -69,14 +69,18 @@ class WaveWatch3:
 
     @step.setter
     def step(self, step):
-        if step >= len(self.data.step):
+        if step < 0:
+            raise ValueError("step must be non-negative")
+
+        if step < len(self.data.step):
+            self._step = step
+            self.date = str(
+                (self.data.time + self.data.step[step]).values.astype("datetime64[h]")
+            )
+        else:
             remaining = step - len(self._data.step)
             self.inc()
             self.step = remaining
-        elif step < 0:
-            raise ValueError()
-        else:
-            self._step = step
 
     @property
     def source(self):
@@ -153,9 +157,7 @@ class WaveWatch3:
 
     def __repr__(self):
         """String representation of a WaveWatch3 instance."""
-        date = self._urls[0]._date.isoformat()
-        grid = self._urls[0].grid
-        return f"WaveWatch3({date!r}, grid={grid!r})"
+        return f"WaveWatch3({self.date!r}, grid={self.grid!r}, source={self.source!r})"
 
     def __eq__(self, other):
         """Test if two WaveWatch3 instances refer to the same data."""
@@ -163,6 +165,7 @@ class WaveWatch3:
             self.month == other.month
             and self.year == other.year
             and self.grid == other.grid
+            and self.source == other.source
         )
 
     @staticmethod
