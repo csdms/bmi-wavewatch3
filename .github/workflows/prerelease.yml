@@ -1,0 +1,45 @@
+name: TestPyPI
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+[ab][0-9]+'
+
+env:
+  TWINE_USERNAME: __token__
+  TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
+  TWINE_REPOSITORY_URL: 'https://test.pypi.org/legacy/'
+
+jobs:
+  build-and-publish:
+    name: Build and publish to TestPyPI
+    runs-on: ${{ matrix.os }}
+
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: ${{ matrix.python-version }}
+          channels: conda-forge
+          channel-priority: true
+
+      - name: Show conda installation info
+        run: |
+          conda info
+          conda list
+
+      - name: Build source distribution
+        run: |
+          python setup.py sdist --dist-dir wheelhouse
+          twine upload --skip-existing wheelhouse/*.tar.gz
