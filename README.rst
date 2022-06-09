@@ -1,3 +1,10 @@
+.. image:: https://github.com/csdms/bmi-wavewatch3/raw/main/docs/source/_static/wavewatch3_logo.png
+   :target: https://github.com/csdms/bmi-wavewatch3
+   :alt: Python interface to WAVEWATCH III data
+
+WAVEWATCH III data in Python
+============================
+
 .. image:: https://github.com/csdms/bmi-wavewatch3/actions/workflows/test.yml/badge.svg
    :target: https://github.com/csdms/bmi-wavewatch3/actions/workflows/test.yml
    :alt: Test status
@@ -5,13 +12,6 @@
 .. image:: https://github.com/csdms/bmi-wavewatch3/workflows/Flake8/badge.svg
 
 .. image:: https://github.com/csdms/bmi-wavewatch3/workflows/Black/badge.svg
-
-.. image:: https://github.com/csdms/bmi-wavewatch3/raw/main/docs/source/_static/wavewatch3_logo.png
-   :target: https://github.com/csdms/bmi-wavewatch3
-   :alt: Python interface to WAVEWATCH III data
-
-A Python interface to WAVEWATCH III data
-========================================
 
 
 About
