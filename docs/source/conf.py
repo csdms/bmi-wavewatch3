@@ -56,7 +56,7 @@ html_theme = "alabaster"
 html_static_path = ["_static"]
 
 html_theme_options = {
-    "description": "WAVEWATCH III datasets in Python.",
+    "description": "WAVEWATCH III data in Python",
     "logo": "wavewatch3_logo.png",
     "logo_name": False,
     "github_user": "csdms",
