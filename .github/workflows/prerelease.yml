@@ -13,7 +13,7 @@ env:
 jobs:
   build-and-publish:
     name: Build and publish to TestPyPI
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     defaults:
       run:
@@ -21,29 +21,18 @@ jobs:
 
     strategy:
       fail-fast: false
-      matrix:
-        os: [ubuntu-latest]
 
     steps:
       - uses: actions/checkout@v2
-
-      - uses: conda-incubator/setup-miniconda@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
         with:
-          auto-update-conda: true
-          python-version: ${{ matrix.python-version }}
-          channels: conda-forge
-          channel-priority: true
-
+          python-version: 3.8
+      
       - name: Install package
         run: |
-          pip install setuptools
           pip install -e .
         
-      - name: Show conda installation info
-        run: |
-          conda info
-          conda list
-
       - name: Build source distribution
         run: |
           pip install twine
