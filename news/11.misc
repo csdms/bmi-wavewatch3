@@ -1,0 +1,5 @@
+Set up GitHub Action to create a source distribution and push it to
+*PyPI*. This action is only run if the version tag is a release version
+(i.e. the version string doesn't end with ``[ab][0-9]+``).
+
+
