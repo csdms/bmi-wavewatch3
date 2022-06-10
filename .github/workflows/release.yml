@@ -1,18 +1,18 @@
-name: TestPyPI
+name: PyPI
 
 on:
   push:
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+[ab][0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - '!v[0-9]+.[0-9]+.[0-9]+[ab][0-9]+'
 
 env:
   TWINE_USERNAME: __token__
-  TWINE_PASSWORD: ${{ secrets.TEST_PYPI_API_TOKEN }}
-  TWINE_REPOSITORY_URL: 'https://test.pypi.org/legacy/'
+  TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
 
 jobs:
   build-and-publish:
-    name: Build and publish to TestPyPI
+    name: Build and publish to PyPI
     runs-on: ubuntu-latest
 
     defaults:
