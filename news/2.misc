@@ -1,4 +1,0 @@
-Set up continuous integration using GitHub actions. This includes tests to
-ensure that the code is styled according to *black*, is free of lint, and
-passes all unit tests.
-
