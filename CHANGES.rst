@@ -3,6 +3,20 @@ Release Notes
 
 .. towncrier release notes start
 
+0.1.1 (2022-06-10)
+------------------
+
+Other Changes and Additions
+```````````````````````````
+
+- Set up GitHub Action to create a source distribution and push it to
+  *TestPyPI*. This action is only run if the version tag is a prerelease version
+  (i.e. the version string ends with ``[ab][0-9]+``). (`#10 <https://github.com/csdms/bmi-wavewatch3/issues/10>`_)
+- Set up GitHub Action to create a source distribution and push it to
+  *PyPI*. This action is only run if the version tag is a release version
+  (i.e. the version string doesn't end with ``[ab][0-9]+``). (`#11 <https://github.com/csdms/bmi-wavewatch3/issues/11>`_)
+
+
 0.1.1b1 (2022-06-09)
 --------------------
 
