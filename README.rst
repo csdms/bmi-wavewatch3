@@ -108,6 +108,10 @@ separated from the date with a ``T`` (i.e. times can be given as ``YYYY-MM-DDTHH
 
   $ ww3 plot --grid=at_4m --data-var=swh "2010-09-15T15"
 
+.. image:: https://raw.githubusercontent.com/csdms/bmi-wavewatch3/main/docs/source/_static/hurrican_julia.png
+  :width: 100%
+  :alt: Hurricane Julia
+
 Plot data from Python
 `````````````````````
 
