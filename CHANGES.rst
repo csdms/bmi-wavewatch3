@@ -3,6 +3,24 @@ Release Notes
 
 .. towncrier release notes start
 
+0.2.0 (2022-06-17)
+------------------
+
+New Features
+````````````
+
+- Added a new subcommand, *plot*, to the *ww3* command-line program.
+  ``ww3 plot`` with download (if the data files are not already cached) and
+  create a plot of the requested data. (`#13 <https://github.com/csdms/bmi-wavewatch3/issues/13>`_)
+
+
+Bug Fixes
+`````````
+
+- Fixed a bug in the reporting of an error caused by an invalide datatime
+  string. (`#13 <https://github.com/csdms/bmi-wavewatch3/issues/13>`_)
+
+
 0.1.1 (2022-06-10)
 ------------------
 
