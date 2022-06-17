@@ -121,7 +121,7 @@ class _WaveWatch3Source:
         try:
             datetime.datetime.fromisoformat(date)
         except ValueError as error:
-            raise DateValueError(error)
+            raise DateValueError(str(error))
         date_in_range_or_raise(date, lower=cls.MIN_DATE, upper=cls.MAX_DATE)
 
         return date

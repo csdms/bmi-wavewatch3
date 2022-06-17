@@ -10,10 +10,12 @@ from functools import partial
 from multiprocessing import Pool, RLock
 
 import click
+import matplotlib.pyplot as plt
 from tqdm.auto import tqdm
 from .downloader import WaveWatch3Downloader
 from .errors import ChoiceError, DateValueError
 from .source import SOURCES
+from .wavewatch3 import WaveWatch3
 
 
 out = partial(click.secho, bold=True, file=sys.stderr)
@@ -26,7 +28,7 @@ DownloadResult = namedtuple("DownloadResult", ["remote", "local", "success", "st
 def validate_date(ctx, param, value):
     source = SOURCES[ctx.parent.params["source"]]
 
-    for date_str in value:
+    for date_str in [value] if isinstance(value, str) else value:
         try:
             source.validate_date(date_str)
         except DateValueError as error:
@@ -39,11 +41,35 @@ def validate_quantity(ctx, param, value):
     if not value:
         return sorted(source.QUANTITIES)
 
-    for quantity in value:
+    for quantity in [value] if isinstance(value, str) else value:
         try:
             source.validate_quantity(quantity)
         except ChoiceError as error:
             raise click.BadParameter(error)
+    return value
+
+
+def validate_data_var(ctx, param, value):
+    data_var_to_quantity = {
+        "dirpw": "dp",
+        "swh": "hs",
+        "perpw": "tp",
+        "u": "wind",
+        "v": "wind",
+        "swdir": "pdir",
+        "swell": "phs",
+        "swper": "ptp",
+    }
+    source = SOURCES[ctx.parent.params["source"]]
+    try:
+        quantity = data_var_to_quantity[value]
+    except KeyError:
+        raise click.BadParameter(ChoiceError(value, list(data_var_to_quantity)))
+
+    try:
+        source.validate_quantity(quantity)
+    except ChoiceError as error:
+        raise click.BadParameter(error)
     return value
 
 
@@ -242,6 +268,53 @@ def clean(ctx, dry_run, cache_dir, yes):
 
     if not dry_run and (verbose and not silent):
         out(f"Removed {len(cache_files)} files ({total_bytes} bytes)")
+
+
+@ww3.command()
+@click.argument("date", callback=validate_date)
+@click.option("--grid", default=None, help="Grid to download", callback=validate_grid)
+@click.option(
+    "--data-var",
+    help="Data variable to plot",
+    default="swh",
+    callback=validate_data_var,
+)
+@click.pass_context
+def plot(ctx, date, grid, data_var):
+    """Plot WAVEWATCH III data by date."""
+    verbose = ctx.parent.params["verbose"]
+    silent = ctx.parent.params["silent"]
+    source = ctx.parent.params["source"]
+
+    data_var_to_quantity = {
+        "dirpw": "dp",
+        "swh": "hs",
+        "perpw": "tp",
+        "u": "wind",
+        "v": "wind",
+        "swdir": "pdir",
+        "swell": "phs",
+        "swper": "ptp",
+    }
+    quantity = data_var_to_quantity[data_var]
+
+    if not silent:
+        out(f"source: {source}")
+        out(f"grid: {grid}")
+        out(f"date: {date}")
+        out(f"data_var: {data_var} ({quantity})")
+
+    ww3 = WaveWatch3(date, source=source, grid=grid)
+    if not silent and verbose:
+        [out(f"source file: {url}") for url in ww3._urls]
+
+    ww3.data
+    if not silent and verbose:
+        [out(f"cache file: {ww3._cache / url.filename}") for url in ww3._urls]
+
+    ww3.data[data_var][ww3.step, :, :].plot()
+    plt.gca().set_aspect(1)
+    plt.show()
 
 
 def _retreive_urls(urls, disable=False, force=False):

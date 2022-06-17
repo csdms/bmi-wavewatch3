@@ -97,6 +97,25 @@ This will download new datasets as necessary and load the new data into the ``da
 Example
 -------
 
+Plot data from the command line
+```````````````````````````````
+
+Running the following from the command line will plot the variable *significant wave height*
+from the WAVEWATCH III *at_4m* grid. Note that the time of day (in this case, 15:00) is
+separated from the date with a ``T`` (i.e. times can be given as ``YYYY-MM-DDTHH``)
+
+.. code:: bash
+
+  $ ww3 plot --grid=at_4m --data-var=swh "2010-09-15T15"
+
+.. image:: https://raw.githubusercontent.com/csdms/bmi-wavewatch3/main/docs/source/_static/hurrican_julia.png
+  :width: 100%
+  :alt: Hurricane Julia
+
+Plot data from Python
+`````````````````````
+
+This example is similar to the previous but uses the *bmi_wavewatch3* Python interface.
 
 .. code:: python
 
