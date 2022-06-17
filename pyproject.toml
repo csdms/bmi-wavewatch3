@@ -38,6 +38,7 @@ dependencies = [
   "bmipy",
   "cfgrib",
   "click",
+  "matplotlib",
   "tomli",
   "tqdm",
   "xarray",
