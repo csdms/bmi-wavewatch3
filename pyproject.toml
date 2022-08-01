@@ -39,6 +39,7 @@ dependencies = [
   "cfgrib",
   "click",
   "matplotlib",
+  "rich-click",
   "tomli",
   "tqdm",
   "xarray",
@@ -57,6 +58,7 @@ dev = [
   "flake8",
   "flake8-bugbear",
   "isort",
+  "nox",
   "pre-commit",
 ]
 testing = [
@@ -66,7 +68,10 @@ testing = [
   "tomli",
 ]
 doc = [
-  "sphinx"
+  "sphinx",
+  "pygments>=2.4",
+  "sphinx-inline-tabs",
+  "furo",
 ]
 
 
@@ -76,6 +81,7 @@ ww3 = "bmi_wavewatch3.cli:ww3"
 
 [tool.setuptools.packages.find]
 where = ["."]
+exclude = ["tests"]
 
 [tool.setuptools.dynamic]
 readme = {file = ["README.rst", "AUTHORS.rst", "CHANGES.rst"]}
