@@ -17,12 +17,19 @@
    :start-after: .. start-abstract
    :end-before: .. end-abstract
 
-.. image:: _static/ww3_global_swh.png
-    :align: center
-    :scale: 50%
-    :alt: Sequence
-    :target: https://bmi-wavewatch3.readthedocs.org/
+.. image:: _static/ww3_global_swh-light.png
+  :target: https://bmi-wavewatch3.readthedocs.org/
+  :width: 100%
+  :alt: Significant wave height
+  :align: center
+  :class: only-light
 
+.. image:: _static/ww3_global_swh-dark.png
+  :target: https://bmi-wavewatch3.readthedocs.org/
+  :width: 100%
+  :alt: Significant wave height
+  :align: center
+  :class: only-dark
 
 .. toctree::
    :caption: Getting Started
