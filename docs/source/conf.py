@@ -105,7 +105,19 @@ html_theme_options = {
     "source_repository": "https://github.com/csdms/bmi-wavewatch3/",
     "source_branch": "main",
     "source_directory": "docs/source",
+    "footer_icons": [
+        {
+            "name": "power",
+            "url": "https://csdms.colorado.edu",
+            "html": """
+               <svg stroke="currentColor" fill="currentColor" stroke-width="0" version="1.1" viewBox="0 0 16 16" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M6 0l-6 8h6l-4 8 14-10h-8l6-6z"></path></svg>
+               <b><i>Powered by CSDMS</i></b>
+            """,
+            "class": "",
+        },
+    ],
 }
+
 
 napoleon_numpy_docstring = True
 napoleon_google_docstring = False
