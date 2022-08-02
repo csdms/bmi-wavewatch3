@@ -14,8 +14,11 @@
 # sys.path.insert(0, os.path.abspath('.'))
 
 import os
+import pathlib
 
 import bmi_wavewatch3
+
+docs_dir = os.path.dirname(__file__)
 
 
 if os.environ.get("READTHEDOCS", ""):
@@ -53,6 +56,7 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.autosummary",
     "sphinx_inline_tabs",
+    "sphinxcontrib.towncrier",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -123,3 +127,9 @@ napoleon_numpy_docstring = True
 napoleon_google_docstring = False
 napoleon_include_init_with_doc = True
 napoleon_include_special_with_doc = True
+
+# -- Options for towncrier_draft extension --------------------------------------------
+
+towncrier_draft_autoversion_mode = "draft"  # or: 'sphinx-release', 'sphinx-version'
+towncrier_draft_include_empty = True
+towncrier_draft_working_directory = pathlib.Path(docs_dir).parent.parent
