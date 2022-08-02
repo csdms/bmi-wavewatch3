@@ -81,7 +81,7 @@ ww3 = "bmi_wavewatch3.cli:ww3"
 
 [tool.setuptools.packages.find]
 where = ["."]
-exclude = ["tests"]
+include = ["bmi_wavewatch3*"]
 
 [tool.setuptools.dynamic]
 readme = {file = ["README.rst", "AUTHORS.rst", "CHANGES.rst"]}
