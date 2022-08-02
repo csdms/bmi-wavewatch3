@@ -17,6 +17,8 @@ WAVEWATCH III data in Python
 About
 -----
 
+.. start-abstract
+
 The *bmi_wavewatch3* Python package provides both a command line interface and a programming interface
 for downloading and working with `WAVEWATCH III`_ data.
 
@@ -29,8 +31,18 @@ for downloading and working with `WAVEWATCH III`_ data.
 
 All data sources provide both global and regional grids.
 
+.. _WAVEWATCH III: https://polar.ncep.noaa.gov/waves
+.. _Phase 1: https://polar.ncep.noaa.gov/waves/hindcasts/nopp-phase1.php
+.. _Phase 2: https://polar.ncep.noaa.gov/waves/hindcasts/nopp-phase2.php
+.. _Multigrid: https://polar.ncep.noaa.gov/waves/hindcasts/prod-multi_1.php
+.. _Singlegrid: https://polar.ncep.noaa.gov/waves/hindcasts/prod-nww3.php
+
+.. end-abstract
+
 Installation
 ------------
+
+.. start-installation
 
 *bmi_wavewatch3* can be installed by running ``pip install bmi-wavewatch3``. It requires Python >= 3.8 to run.
 
@@ -43,9 +55,12 @@ directly from GitHub,
 
 *bmi_wavewatch3* is also available through *conda*, ``conda install bmi-wavewatch3 -c conda-forge``.
 
+.. end-installation
 
 Usage
 -----
+
+.. start-usage
 
 To get started, you can download *WAVEWATCH III* data by date with the *ww3* command
 (use `ww3 --help` to print a brief message),
@@ -108,12 +123,25 @@ separated from the date with a ``T`` (i.e. times can be given as ``YYYY-MM-DDTHH
 
   $ ww3 plot --grid=at_4m --data-var=swh "2010-09-15T15"
 
-.. image:: https://raw.githubusercontent.com/csdms/bmi-wavewatch3/main/docs/source/_static/hurricane_julia.png
+.. image:: https://raw.githubusercontent.com/csdms/bmi-wavewatch3/main/docs/source/_static/hurricane_julia-light.png
   :width: 100%
   :alt: Hurricane Julia
+  :align: center
+  :class: only-light
+
+.. image:: https://raw.githubusercontent.com/csdms/bmi-wavewatch3/main/docs/source/_static/hurricane_julia-dark.png
+  :width: 100%
+  :alt: Hurricane Julia
+  :align: center
+  :class: only-dark
+
+.. end-usage
+
 
 Plot data from Python
 `````````````````````
+
+.. start-plotting
 
 This example is similar to the previous but uses the *bmi_wavewatch3* Python interface.
 
@@ -160,15 +188,23 @@ since the start of the month),
    56
    >>> ww3.data.swh[ww3.step, :, :].plot()
 
-.. image:: https://raw.githubusercontent.com/csdms/bmi-wavewatch3/main/docs/source/_static/ww3_global_swh.png
+
+.. image:: https://raw.githubusercontent.com/csdms/bmi-wavewatch3/main/docs/source/_static/ww3_global_swh-light.png
+  :target: https://bmi-wavewatch3.readthedocs.org/
   :width: 100%
   :alt: Significant wave height
+  :align: center
+  :class: only-light
 
-.. _WAVEWATCH III: https://polar.ncep.noaa.gov/waves
-.. _Phase 1: https://polar.ncep.noaa.gov/waves/hindcasts/nopp-phase1.php
-.. _Phase 2: https://polar.ncep.noaa.gov/waves/hindcasts/nopp-phase2.php
-.. _Multigrid: https://polar.ncep.noaa.gov/waves/hindcasts/prod-multi_1.php
-.. _Singlegrid: https://polar.ncep.noaa.gov/waves/hindcasts/prod-nww3.php
+.. image:: https://raw.githubusercontent.com/csdms/bmi-wavewatch3/main/docs/source/_static/ww3_global_swh-dark.png
+  :target: https://bmi-wavewatch3.readthedocs.org/
+  :width: 100%
+  :alt: Significant wave height
+  :align: center
+  :class: only-dark
+
+.. end-plotting
+
 .. _WAVEWATCH III description: https://polar.ncep.noaa.gov/waves/wavewatch/
 .. _WAVEWATCH III hindcasts: http://polar.ncep.noaa.gov/waves/hindcasts/
 .. _WAVEWATCH III thredds: https://www.ncei.noaa.gov/thredds-ocean/catalog/ncep/nww3/catalog.html

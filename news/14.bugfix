@@ -1,0 +1,1 @@
+Fixed an installation bug where the *tests* folder was being installed as a package in *site-packages*.
