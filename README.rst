@@ -123,9 +123,17 @@ separated from the date with a ``T`` (i.e. times can be given as ``YYYY-MM-DDTHH
 
   $ ww3 plot --grid=at_4m --data-var=swh "2010-09-15T15"
 
-.. image:: https://raw.githubusercontent.com/csdms/bmi-wavewatch3/main/docs/source/_static/hurricane_julia.png
+.. image:: https://raw.githubusercontent.com/csdms/bmi-wavewatch3/main/docs/source/_static/hurricane_julia-light.png
   :width: 100%
   :alt: Hurricane Julia
+  :align: center
+  :class: only-light
+
+.. image:: https://raw.githubusercontent.com/csdms/bmi-wavewatch3/main/docs/source/_static/hurricane_julia-dark.png
+  :width: 100%
+  :alt: Hurricane Julia
+  :align: center
+  :class: only-dark
 
 .. end-usage
 
@@ -180,9 +188,20 @@ since the start of the month),
    56
    >>> ww3.data.swh[ww3.step, :, :].plot()
 
-.. image:: https://raw.githubusercontent.com/csdms/bmi-wavewatch3/main/docs/source/_static/ww3_global_swh.png
+
+.. image:: https://raw.githubusercontent.com/csdms/bmi-wavewatch3/main/docs/source/_static/ww3_global_swh-light.png
+  :target: https://bmi-wavewatch3.readthedocs.org/
   :width: 100%
   :alt: Significant wave height
+  :align: center
+  :class: only-light
+
+.. image:: https://raw.githubusercontent.com/csdms/bmi-wavewatch3/main/docs/source/_static/ww3_global_swh-dark.png
+  :target: https://bmi-wavewatch3.readthedocs.org/
+  :width: 100%
+  :alt: Significant wave height
+  :align: center
+  :class: only-dark
 
 .. end-plotting
 
