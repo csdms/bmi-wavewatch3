@@ -36,22 +36,11 @@ jobs:
       - name: Show conda installation info
         run: |
           conda info
-          conda list
 
       - name: Build and install package
         run: |
-          pip install -e .
+          pip install nox
 
-      - name: Install testing requirements
-        run: pip install -e .[testing]
+      - name: Test package
+        run: nox -s tests
 
-      - name: Test
-        env:
-          HYPOTHESIS_PROFILE: "ci"
-        run: |
-          python -c 'import bmi_wavewatch3; print(bmi_wavewatch3.__version__)'
-          pytest --cov=bmi_wavewatch3 --cov-report=xml:$(pwd)/coverage.xml -vvv
-
-      - name: Coveralls
-        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.9'
-        uses: AndreMiras/coveralls-python-action@v20201129
