@@ -26,7 +26,14 @@ if os.environ.get("READTHEDOCS", ""):
     import subprocess
 
     subprocess.run(
-        ["sphinx-apidoc", "--force", "-o", "./api", "../../bmi_wavewatch3", "*tests"]
+        [
+            "sphinx-apidoc",
+            "--force",
+            "-o",
+            "./api",
+            "../../src/bmi_wavewatch3",
+            "*tests",
+        ]
     )
 
 
