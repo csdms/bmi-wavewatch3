@@ -1,0 +1,3 @@
+Added a *nox* configuration file, *noxfile.py*, that scripts some routine
+package maintenance tasks.
+

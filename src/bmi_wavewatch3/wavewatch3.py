@@ -210,7 +210,7 @@ class WaveWatch3:
                 [str(url) for url in urls],
             )
 
-        return sorted([folder / url.filename for url in urls])
+        return sorted(folder / url.filename for url in urls)
 
 
 @contextlib.contextmanager

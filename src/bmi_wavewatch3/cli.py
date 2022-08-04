@@ -251,7 +251,7 @@ def clean(ctx, dry_run, cache_dir, yes):
         )
     )
 
-    total_bytes = sum([cache_file.stat().st_size for cache_file in cache_files])
+    total_bytes = sum(cache_file.stat().st_size for cache_file in cache_files)
 
     if not silent and not dry_run:
         for cache_file in cache_files:

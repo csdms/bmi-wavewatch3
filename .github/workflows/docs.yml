@@ -47,7 +47,7 @@ jobs:
     
           - name: Install dependencies
             run: |
-              pip install -e ".[doc]"
+              pip install nox
 
           - name: Build documentation
-            run: make -C docs clean html            
+            run: nox -s docs
