@@ -20,4 +20,4 @@ jobs:
       - uses: psf/black@stable
         with:
           options: "--check --verbose --diff"
-          src: "setup.py bmi_wavewatch3 tests"
+          src: "setup.py src/bmi_wavewatch3 tests"
