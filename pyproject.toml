@@ -69,6 +69,8 @@ testing = [
 ]
 doc = [
   "sphinx",
+  "sphinx-autobuild",
+  "sphinx-copybutton",
   "pygments>=2.4",
   "sphinx-inline-tabs",
   "furo",
