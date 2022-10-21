@@ -36,16 +36,17 @@
    :maxdepth: 2
    :hidden:
 
-   installation
+   quickstart
    usage
    plotting
-   
+
 .. toctree::
    :caption: Development
    :maxdepth: 2
    :hidden:
 
+   Contributing <contributing/index>
+   API Reference <api/index>
    Release Notes <changes>
    Contributors <authors>
    License <license>
-   API Reference <api/index>
