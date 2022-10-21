@@ -62,6 +62,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.napoleon",
     "sphinx.ext.autosummary",
+    "sphinx_copybutton",
     "sphinx_inline_tabs",
     "sphinxcontrib.towncrier",
 ]
@@ -140,3 +141,12 @@ napoleon_include_special_with_doc = True
 towncrier_draft_autoversion_mode = "draft"  # or: 'sphinx-release', 'sphinx-version'
 towncrier_draft_include_empty = True
 towncrier_draft_working_directory = pathlib.Path(docs_dir).parent.parent
+
+# -- Options for intersphinx extension ---------------------------------------
+
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+    "numpy": ("https://numpy.org/doc/stable/", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
+    "xarray": ("https://docs.xarray.dev/en/stable/", None),
+}
