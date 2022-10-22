@@ -50,20 +50,20 @@ on `PyPI`_ and `conda-forge`_.
 .. tab:: pip
 
   .. code-block:: bash
-  
+
     pip install bmi-wavewatch3
 
 .. tab:: mamba
 
   .. code-block:: bash
-  
+
     conda install mamba
     mamba install bmi-wavewatch3 -c conda-forge
 
 .. tab:: conda
 
   .. code-block:: bash
-  
+
     conda install bmi-wavewatch3 -c conda-forge
 
 You can now begin to download WAVEWATCH III data with the *ww3* command,
