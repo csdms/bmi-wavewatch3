@@ -1,3 +1,4 @@
+"""A Basic Model Interface to the *wavewatch3* package."""
 from collections import namedtuple
 from typing import Tuple
 
@@ -20,7 +21,6 @@ BmiGridUniformRectilinear = namedtuple(
 
 
 class BmiWaveWatch3(Bmi):
-
     """BMI-mediated access to WaveWatch III data."""
 
     _name = "bmi-wavewatch3"
@@ -44,7 +44,7 @@ class BmiWaveWatch3(Bmi):
         self._data = None
 
     def get_component_name(self) -> str:
-        """Name of the component.
+        """Return the name of the component.
 
         Returns
         -------
@@ -54,7 +54,7 @@ class BmiWaveWatch3(Bmi):
         return self._name
 
     def get_current_time(self) -> float:
-        """Current time of the model.
+        """Return the current time of the model.
 
         Returns
         -------
@@ -64,7 +64,7 @@ class BmiWaveWatch3(Bmi):
         return float(self._data.step[self._time_index]) * 1e-9 / 60 / 60
 
     def get_end_time(self) -> float:
-        """End time of the model.
+        """Return the end time of the model.
 
         Returns
         -------
@@ -420,7 +420,7 @@ class BmiWaveWatch3(Bmi):
         return 0.0
 
     def get_time_step(self) -> float:
-        """Current time step of the model.
+        """Return the current time step of the model.
 
         The model time step should be of type float.
 
@@ -478,7 +478,7 @@ class BmiWaveWatch3(Bmi):
             An input or output variable name, a CSDMS Standard Name.
         dest : ndarray
             A numpy array into which to place the values.
-        indices : array_like
+        inds : array_like
             The indices into the variable array.
 
         Returns
@@ -693,9 +693,9 @@ class BmiWaveWatch3(Bmi):
 
         Parameters
         ----------
-        var_name : str
+        name : str
             An input or output variable name, a CSDMS Standard Name.
-        src : array_like
+        values : array_like
             The new value for the specified variable.
         """
         raise NotImplementedError("set_value")
@@ -707,9 +707,9 @@ class BmiWaveWatch3(Bmi):
 
         Parameters
         ----------
-        var_name : str
+        name : str
             An input or output variable name, a CSDMS Standard Name.
-        indices : array_like
+        inds : array_like
             The indices into the variable array.
         src : array_like
             The new value for the specified variable.
@@ -749,7 +749,7 @@ def _grids_from_dataset(dataset):
 
 
 def _var_grid(dataset):
-    var_to_grid = dict()
+    var_to_grid = {}
     for name, var in dataset.data_vars.items():
         shape = var.GRIB_Ny, var.GRIB_Nx
         yx_spacing = (

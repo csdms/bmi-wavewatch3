@@ -5,6 +5,9 @@ from itertools import chain
 
 import nox
 
+PROJECT = "bmi_wavewatch3"
+ROOT = pathlib.Path(__file__).parent
+
 
 @nox.session
 def tests(session: nox.Session) -> None:
@@ -29,13 +32,11 @@ def cli(session: nox.Session) -> None:
     session.run("ww3", "url", "--help")
 
 
-@nox.session
+@nox.session(reuse_venv=True)
 def lint(session: nox.Session) -> None:
     """Look for lint."""
     session.install("pre-commit")
     session.run("pre-commit", "run", "--all-files")
-
-    # towncrier(session)
 
 
 @nox.session
@@ -45,16 +46,60 @@ def towncrier(session: nox.Session) -> None:
     session.run("towncrier", "check", "--compare-with", "origin/main")
 
 
-@nox.session
-def docs(session: nox.Session) -> None:
+@nox.session(name="build-docs", reuse_venv=True)
+def build_docs(session: nox.Session) -> None:
     """Build the docs."""
-    session.install(".[doc]")
+    with session.chdir(ROOT):
+        session.install(".[doc]")
 
-    session.chdir("docs/source")
-    if os.path.exists("build"):
-        shutil.rmtree("build")
-    session.run("sphinx-apidoc", "--force", "-o", "api", "../../src/bmi_wavewatch3")
-    session.run("sphinx-build", "-b", "html", "-W", ".", "build/html")
+    clean_docs(session)
+
+    with session.chdir(ROOT):
+        session.run(
+            "sphinx-apidoc",
+            "-e",
+            "-force",
+            "--no-toc",
+            "--module-first",
+            "--templatedir",
+            "docs/_templates",
+            "-o",
+            "docs/api",
+            "src/bmi_wavewatch3",
+        )
+        session.run(
+            "sphinx-build",
+            "-b",
+            "dirhtml",
+            "-W",
+            "docs",
+            "build/html",
+        )
+
+
+@nox.session(python=False, name="clean-docs")
+def clean_docs(session: nox.Session) -> None:
+    """Clean up the docs folder."""
+    with session.chdir(ROOT / "docs"):
+        if os.path.exists("build/html"):
+            shutil.rmtree("build/html")
+
+        for p in pathlib.Path("api").rglob("bmi_wavewatch3*.rst"):
+            p.unlink()
+
+
+@nox.session(name="live-docs", reuse_venv=True)
+def live_docs(session: nox.Session) -> None:
+    session.install(".[doc]")
+    session.run(
+        "sphinx-autobuild",
+        "-v",
+        "-b",
+        "dirhtml",
+        "docs",
+        "build/html",
+        "--open-browser",
+    )
 
 
 @nox.session
@@ -115,7 +160,9 @@ def clean(session):
     shutil.rmtree(f"src/{PROJECT}.egg-info", ignore_errors=True)
     shutil.rmtree(".pytest_cache", ignore_errors=True)
     shutil.rmtree(".venv", ignore_errors=True)
-    for p in chain(ROOT.rglob("*.py[co]"), ROOT.rglob("__pycache__")):
+    for p in chain(
+        ROOT.rglob("*.py[co]"), ROOT.rglob("__pycache__"), ROOT.rglob(".DS_Store")
+    ):
         if p.is_dir():
             p.rmdir()
         else:

@@ -1,3 +1,5 @@
+"""Programmatically access WAVEWATCH III datasets."""
+
 import contextlib
 import datetime
 import os
@@ -15,6 +17,8 @@ from .source import SOURCES
 
 
 class WaveWatch3:
+    """Access WAVEWATCH III data."""
+
     def __init__(
         self,
         date,
@@ -58,13 +62,14 @@ class WaveWatch3:
 
     @property
     def data(self):
-        """Current WAVEWATCH III data as an xarray.Dataset."""
+        """Return the current WAVEWATCH III data as an :class:`xarray.Dataset`."""
         if self._data is None:
             self._load_data()
         return self._data
 
     @property
     def step(self):
+        """Return the current location in the data."""
         return self._step
 
     @step.setter
@@ -84,17 +89,17 @@ class WaveWatch3:
 
     @property
     def source(self):
-        """Source from which data will be downloaded."""
+        """Return the source from which data will be downloaded."""
         return self._source
 
     @property
     def grid(self):
-        """The WAVEWATCH III grid region."""
+        """Return the WAVEWATCH III grid region."""
         return self._urls[0].grid
 
     @property
     def date(self):
-        """Current date as an isoformatted string."""
+        """Return the current date as an iso-formatted string."""
         return self._date.isoformat(timespec="hours")
 
     @date.setter
@@ -111,24 +116,26 @@ class WaveWatch3:
 
     @property
     def year(self):
-        """The current year."""
+        """Return the current year."""
         return self._date.year
 
     @property
     def month(self):
-        """The current month."""
+        """Return the current month."""
         return self._date.month
 
     @property
     def day(self):
+        """Return the current day."""
         return self._date.day
 
     @property
     def hour(self):
+        """Return the current hour."""
         return self._date.hour
 
     def inc(self, months=1):
-        """Increment to current date by some number of months.
+        """Increment the current date by some number of months.
 
         Parameters
         ----------
@@ -138,7 +145,7 @@ class WaveWatch3:
         self.date = (self._date + relativedelta(months=months)).isoformat()
 
     def _load_data(self):
-        """Load the current data into an xarray Dataset."""
+        """Load the current data into an :class:`xarray.Dataset`."""
         self._fetch_data()
         self._data = xr.open_mfdataset(
             [self._cache / url.filename for url in self._urls],
@@ -152,11 +159,11 @@ class WaveWatch3:
     def _fetch_data(self):
         """Download data in parallel."""
         self._cache.mkdir(parents=True, exist_ok=True)
-        with as_cwd(self._cache):
+        with _as_cwd(self._cache):
             Pool().map(WaveWatch3Downloader.retreive, [str(url) for url in self._urls])
 
     def __repr__(self):
-        """String representation of a WaveWatch3 instance."""
+        """Return a string representation of a WaveWatch3 instance."""
         return f"WaveWatch3({self.date!r}, grid={self.grid!r}, source={self.source!r})"
 
     def __eq__(self, other):
@@ -183,6 +190,8 @@ class WaveWatch3:
             already exists in the destination folder.
         grid : str, optional
             The WAVEWATCH III grid to download.
+        source : str, optional
+            The name of the WAVEWATCH III data source.
 
         Returns
         -------
@@ -204,7 +213,7 @@ class WaveWatch3:
                 for quantity in Source.QUANTITIES
             ]
 
-        with as_cwd(folder):
+        with _as_cwd(folder):
             Pool().map(
                 partial(WaveWatch3Downloader.retreive, force=force),
                 [str(url) for url in urls],
@@ -214,11 +223,13 @@ class WaveWatch3:
 
 
 @contextlib.contextmanager
-def as_cwd(path):
+def _as_cwd(path):
     """Change directory context.
 
-    Args:
-        path (str): Path-like object to a directory.
+    Parameters
+    ----------
+    path : str or Path-like
+        Directory to make the current working directory.
     """
     prev_cwd = pathlib.Path.cwd()
     os.chdir(path)

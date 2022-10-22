@@ -1,3 +1,4 @@
+"""Define the various sources for WAVEWATCH III data."""
 import datetime
 import pathlib
 import urllib
@@ -32,10 +33,12 @@ class _WaveWatch3Source:
 
     @property
     def path(self):
+        """Return the path to the remote WAVEWATCH III data file."""
         raise NotImplementedError("path")
 
     @property
     def filename(self):
+        """Return the name of WAVEWATCH III data file."""
         raise NotImplementedError("filename")
 
     def __str__(self):
@@ -122,12 +125,25 @@ class _WaveWatch3Source:
             datetime.datetime.fromisoformat(date)
         except ValueError as error:
             raise DateValueError(str(error))
-        date_in_range_or_raise(date, lower=cls.MIN_DATE, upper=cls.MAX_DATE)
+        _date_in_range_or_raise(date, lower=cls.MIN_DATE, upper=cls.MAX_DATE)
 
         return date
 
 
-def date_in_range_or_raise(date, lower=None, upper=None):
+def _date_in_range_or_raise(date, lower=None, upper=None):
+    """Check if a date is within a given range.
+
+    Parameters
+    ----------
+    date : str
+        An iso-formatted date.
+    lower : str, optional
+        The lower bound for the date. If not provided, there
+        is no lower bound.
+    upper : str, optional
+        The upper bound for the date. If not provided, there
+        is no upper bound.
+    """
     date = datetime.datetime.fromisoformat(date)
 
     lower = datetime.datetime.fromisoformat(lower) if lower else lower
@@ -144,7 +160,8 @@ def date_in_range_or_raise(date, lower=None, upper=None):
 
 
 class WaveWatch3SourcePhase1(_WaveWatch3Source):
-    """
+    """The WAVEWATCH III Phase 1 data source.
+
     https://polar.ncep.noaa.gov/waves/hindcasts/nopp-phase1.php
     """
 
@@ -178,6 +195,7 @@ class WaveWatch3SourcePhase1(_WaveWatch3Source):
 
     @property
     def path(self):
+        """Return the path to the remote WAVEWATCH III data file."""
         path = (
             self.PREFIX / pathlib.PurePosixPath(f"{self.year}{self.month:02d}") / "grib"
         )
@@ -185,11 +203,13 @@ class WaveWatch3SourcePhase1(_WaveWatch3Source):
 
     @property
     def filename(self):
+        """Return the name of WAVEWATCH III data file."""
         return f"multi_reanal.{self.grid}.{self.quantity}.{self.year}{self.month:02d}.grb2.gz"
 
 
 class WaveWatch3SourcePhase2(_WaveWatch3Source):
-    """
+    """The WAVEWATCH III Phase 2 data source.
+
     https://polar.ncep.noaa.gov/waves/hindcasts/nopp-phase2.php
     """
 
@@ -222,6 +242,7 @@ class WaveWatch3SourcePhase2(_WaveWatch3Source):
 
     @property
     def path(self):
+        """Return the path to the remote WAVEWATCH III data file."""
         path = (
             self.PREFIX
             / pathlib.PurePosixPath(f"{self.year}{self.month:02d}")
@@ -231,13 +252,15 @@ class WaveWatch3SourcePhase2(_WaveWatch3Source):
 
     @property
     def filename(self):
+        """Return the name of WAVEWATCH III data file."""
         return (
             f"multi_reanal.{self.grid}.{self.quantity}.{self.year}{self.month:02d}.grb2"
         )
 
 
 class WaveWatch3SourceMultigrid(_WaveWatch3Source):
-    """
+    """The WAVEWATCH III multi-grid data source.
+
     https://polar.ncep.noaa.gov/waves/hindcasts/prod-multi_1.php
     """
 
@@ -250,6 +273,7 @@ class WaveWatch3SourceMultigrid(_WaveWatch3Source):
 
     @property
     def path(self):
+        """Return the path to the remote WAVEWATCH III data file."""
         path = (
             self.PREFIX
             / pathlib.PurePosixPath(f"{self.year}{self.month:02d}")
@@ -259,11 +283,13 @@ class WaveWatch3SourceMultigrid(_WaveWatch3Source):
 
     @property
     def filename(self):
+        """Return the name of WAVEWATCH III data file."""
         return f"multi_1.{self.grid}.{self.quantity}.{self.year}{self.month:02d}.grb2"
 
 
 class WaveWatch3SourceMultigridExt(_WaveWatch3Source):
-    """
+    """The WAVEWATCH III multi-grid extended data source.
+
     https://polar.ncep.noaa.gov/waves/hindcasts/prod-multi_1.php
     """
 
@@ -289,6 +315,7 @@ class WaveWatch3SourceMultigridExt(_WaveWatch3Source):
 
     @property
     def path(self):
+        """Return the path to the remote WAVEWATCH III data file."""
         path = (
             self.PREFIX
             / pathlib.PurePosixPath(f"{self.year}{self.month:02d}")
@@ -298,10 +325,13 @@ class WaveWatch3SourceMultigridExt(_WaveWatch3Source):
 
     @property
     def filename(self):
+        """Return the name of WAVEWATCH III data file."""
         return f"multi_1.{self.grid}.{self.quantity}.{self.year}{self.month:02d}.grb2"
 
 
 class WaveWatch3SourceThredds(_WaveWatch3Source):
+    """The WAVEWATCH III thredds data source."""
+
     SCHEME = "https"
     NETLOC = "www.ncei.noaa.gov"
     PREFIX = "/thredds-ocean/fileServer/ncep/nww3"
@@ -311,17 +341,20 @@ class WaveWatch3SourceThredds(_WaveWatch3Source):
 
     @property
     def path(self):
+        """Return the path to the remote WAVEWATCH III data file."""
         path = self.PREFIX / pathlib.PurePosixPath(f"{self.year}", f"{self.month:02d}")
         path /= self.grid if self.year < 2017 else "gribs"
         return path / self.filename
 
     @property
     def filename(self):
+        """Return the name of WAVEWATCH III data file."""
         return f"multi_1.{self.grid}.{self.quantity}.{self.year}{self.month:02d}.grb2"
 
 
 class WaveWatch3SourceSinglegrid(_WaveWatch3Source):
-    """
+    """The WAVEWATCH III single grid data source.
+
     https://polar.ncep.noaa.gov/waves/hindcasts/prod-nww3.php
     """
 
@@ -339,10 +372,12 @@ class WaveWatch3SourceSinglegrid(_WaveWatch3Source):
 
     @property
     def path(self):
+        """Return the path to the remote WAVEWATCH III data file."""
         return pathlib.PurePosixPath(self.PREFIX) / self.filename
 
     @property
     def filename(self):
+        """Return the name of WAVEWATCH III data file."""
         return f"{self.grid}.{self.quantity}.{self.year}{self.month:02d}.grb"
 
 
