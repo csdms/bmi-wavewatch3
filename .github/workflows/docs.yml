@@ -50,4 +50,4 @@ jobs:
               pip install nox
 
           - name: Build documentation
-            run: nox -s docs
+            run: nox -s build-docs
