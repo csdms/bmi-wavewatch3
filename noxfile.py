@@ -159,7 +159,9 @@ def clean(session):
     shutil.rmtree(f"src/{PROJECT}.egg-info", ignore_errors=True)
     shutil.rmtree(".pytest_cache", ignore_errors=True)
     shutil.rmtree(".venv", ignore_errors=True)
-    for p in chain(ROOT.rglob("*.py[co]"), ROOT.rglob("__pycache__")):
+    for p in chain(
+        ROOT.rglob("*.py[co]"), ROOT.rglob("__pycache__"), ROOT.rglob(".DS_Store")
+    ):
         if p.is_dir():
             p.rmdir()
         else:
