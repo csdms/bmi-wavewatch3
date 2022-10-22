@@ -62,18 +62,18 @@ def build_docs(session: nox.Session) -> None:
             "--no-toc",
             "--module-first",
             "--templatedir",
-            "docs/source/_templates",
+            "docs/_templates",
             "-o",
-            "docs/source/api",
+            "docs/api",
             "src/bmi_wavewatch3",
         )
         session.run(
             "sphinx-build",
             "-b",
-            "html",
+            "dirhtml",
             "-W",
-            "docs/source",
-            "docs/_build/html",
+            "docs",
+            "build/html",
         )
 
 
@@ -81,10 +81,10 @@ def build_docs(session: nox.Session) -> None:
 def clean_docs(session: nox.Session) -> None:
     """Clean up the docs folder."""
     with session.chdir(ROOT / "docs"):
-        if os.path.exists("_build"):
-            shutil.rmtree("_build")
+        if os.path.exists("build/html"):
+            shutil.rmtree("build/html")
 
-        for p in pathlib.Path("source/api").rglob("bmi_wavewatch3*.rst"):
+        for p in pathlib.Path("api").rglob("bmi_wavewatch3*.rst"):
             p.unlink()
 
 
@@ -93,10 +93,11 @@ def live_docs(session: nox.Session) -> None:
     session.install(".[doc]")
     session.run(
         "sphinx-autobuild",
+        "-v",
         "-b",
-        "html",
-        "docs/source",
-        "docs/_build/html",
+        "dirhtml",
+        "docs",
+        "build/html",
         "--open-browser",
     )
 

@@ -2,6 +2,6 @@
 Usage
 =====
 
-.. include:: ../../README.rst
+.. include:: ../README.rst
     :start-after: .. start-usage
     :end-before: .. end-usage

@@ -13,7 +13,7 @@
    :class: only-dark
 
 
-.. include:: ../../README.rst
+.. include:: ../README.rst
    :start-after: .. start-abstract
    :end-before: .. end-abstract
 

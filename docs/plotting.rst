@@ -2,6 +2,6 @@
 Plotting Output
 ===============
 
-.. include:: ../../README.rst
+.. include:: ../README.rst
     :start-after: .. start-plotting
     :end-before: .. end-plotting

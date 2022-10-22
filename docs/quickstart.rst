@@ -8,7 +8,7 @@ Quickstart
   not necessary, we **highly recommend** you install *bmi-wavewatch3* into its own
   :ref:`virtual environment <virtual_environments>`.
 
-.. include:: ../../README.rst
+.. include:: ../README.rst
     :start-after: .. start-quickstart
     :end-before: .. end-quickstart
 
