@@ -1,3 +1,4 @@
+"""Command line interface to *bmi_wavewatch3*."""
 import inspect
 import itertools
 import os
@@ -9,23 +10,40 @@ from collections import namedtuple
 from functools import partial
 from multiprocessing import Pool, RLock
 
-import click
+# import click
 import matplotlib.pyplot as plt
+import rich_click as click
 from tqdm.auto import tqdm
+
 from .downloader import WaveWatch3Downloader
 from .errors import ChoiceError, DateValueError
 from .source import SOURCES
 from .wavewatch3 import WaveWatch3
+
+click.rich_click.ERRORS_SUGGESTION = (
+    "Try running the '--help' flag for more information."
+)
+click.rich_click.ERRORS_EPILOGUE = (
+    "To find out more, visit https://github.com/csdms/bmi-wavewatch3"
+)
+click.rich_click.STYLE_ERRORS_SUGGESTION = "yellow italic"
+click.rich_click.SHOW_ARGUMENTS = True
+click.rich_click.GROUP_ARGUMENTS_OPTIONS = False
+click.rich_click.SHOW_METAVARS_COLUMN = True
+click.rich_click.USE_MARKDOWN = True
 
 
 out = partial(click.secho, bold=True, file=sys.stderr)
 err = partial(click.secho, fg="red", file=sys.stderr)
 
 
-DownloadResult = namedtuple("DownloadResult", ["remote", "local", "success", "status"])
+_DownloadResult = namedtuple(
+    "_DownloadResult", ["remote", "local", "success", "status"]
+)
 
 
-def validate_date(ctx, param, value):
+def _validate_date(ctx, param, value):
+    """Check if a provided date is valid."""
     source = SOURCES[ctx.parent.params["source"]]
 
     for date_str in [value] if isinstance(value, str) else value:
@@ -36,7 +54,8 @@ def validate_date(ctx, param, value):
     return value
 
 
-def validate_quantity(ctx, param, value):
+def _validate_quantity(ctx, param, value):
+    """Check if a provided quantity is valid."""
     source = SOURCES[ctx.parent.params["source"]]
     if not value:
         return sorted(source.QUANTITIES)
@@ -49,7 +68,8 @@ def validate_quantity(ctx, param, value):
     return value
 
 
-def validate_data_var(ctx, param, value):
+def _validate_data_var(ctx, param, value):
+    """Check if a provided data variable is valid."""
     data_var_to_quantity = {
         "dirpw": "dp",
         "swh": "hs",
@@ -73,7 +93,8 @@ def validate_data_var(ctx, param, value):
     return value
 
 
-def validate_grid(ctx, param, value):
+def _validate_grid(ctx, param, value):
+    """Check if a provided WAVEWATCH III grid is valid."""
     source = SOURCES[ctx.parent.params["source"]]
     if not value:
         return inspect.signature(source).parameters["grid"].default
@@ -85,7 +106,7 @@ def validate_grid(ctx, param, value):
     return value
 
 
-@click.group(chain=True)
+@click.group(chain=False)
 @click.version_option()
 @click.option(
     "--cd",
@@ -111,20 +132,26 @@ def validate_grid(ctx, param, value):
 def ww3(cd, silent, verbose, source) -> None:
     """Download WAVEWATCH III data.
 
-    \b
-    Examples:
+    Dates can be provided either as iso-formatted dates (*YYYY-MM-DD*) or
+    as date times (**YYYY-MM-DDTHH**).
 
-      Download WAVEWATCH III data by date,
+    # Examples:
 
-        $ ww3 fetch 2010-05-22 2010-05-22
+    The following will download the WAVEWATCH III datasets that contain
+    the given dates,
+
+    ```bash
+    $ ww3 fetch "2010-05-22" "2010-05-22"
+    ```
     """
     os.chdir(cd)
 
 
 @ww3.command()
-@click.option("--all", is_flag=True, help="info on all sources")
+@click.option("--all", is_flag=True, help="Get info for all available sources")
 @click.pass_context
 def info(ctx, all):
+    """Get information about a WAVEWATCHIII data source."""
     source = ctx.parent.params["source"]
     sources = SOURCES if all else {source: SOURCES[source]}
 
@@ -149,14 +176,14 @@ def info(ctx, all):
 
 
 @ww3.command()
-@click.argument("date", nargs=-1, callback=validate_date)
-@click.option("--grid", default=None, help="Grid to download", callback=validate_grid)
+@click.argument("date", nargs=-1, callback=_validate_date)
+@click.option("--grid", default=None, help="Grid to download", callback=_validate_grid)
 @click.option(
     "--quantity",
     "-q",
     multiple=True,
     help="Quantity to download",
-    callback=validate_quantity,
+    callback=_validate_quantity,
 )
 @click.pass_context
 def url(ctx, date, grid, quantity):
@@ -169,7 +196,7 @@ def url(ctx, date, grid, quantity):
 
 
 @ww3.command()
-@click.argument("date", nargs=-1, callback=validate_date)
+@click.argument("date", nargs=-1, callback=_validate_date)
 @click.option("--dry-run", is_flag=True, help="do not actually download data")
 @click.option(
     "--force",
@@ -178,13 +205,13 @@ def url(ctx, date, grid, quantity):
     help="force download even if local file already exists",
 )
 @click.option("--file", type=click.File("r", lazy=False), help="read dates from a file")
-@click.option("--grid", default=None, help="Grid to download", callback=validate_grid)
+@click.option("--grid", default=None, help="Grid to download", callback=_validate_grid)
 @click.option(
     "--quantity",
     "-q",
     multiple=True,
     help="Quantity to download",
-    callback=validate_quantity,
+    callback=_validate_quantity,
 )
 @click.pass_context
 def fetch(ctx, date, dry_run, force, file, grid, quantity):
@@ -203,7 +230,7 @@ def fetch(ctx, date, dry_run, force, file, grid, quantity):
             out(url)
 
     if not dry_run:
-        results = _retreive_urls(urls, disable=silent, force=force)
+        results = _retrieve_urls(urls, disable=silent, force=force)
 
         if not silent:
             [
@@ -231,7 +258,7 @@ def fetch(ctx, date, dry_run, force, file, grid, quantity):
 @click.option("--yes", is_flag=True, help="remove files without prompting")
 @click.pass_context
 def clean(ctx, dry_run, cache_dir, yes):
-    """Remove cached date files."""
+    """Remove cached data files."""
     verbose = ctx.parent.params["verbose"]
     silent = ctx.parent.params["silent"]
 
@@ -271,13 +298,13 @@ def clean(ctx, dry_run, cache_dir, yes):
 
 
 @ww3.command()
-@click.argument("date", callback=validate_date)
-@click.option("--grid", default=None, help="Grid to download", callback=validate_grid)
+@click.argument("date", callback=_validate_date, metavar="YYYY-MM-DD[THH]")
+@click.option("--grid", default=None, help="Grid to download", callback=_validate_grid)
 @click.option(
     "--data-var",
     help="Data variable to plot",
     default="swh",
-    callback=validate_data_var,
+    callback=_validate_data_var,
 )
 @click.pass_context
 def plot(ctx, date, grid, data_var):
@@ -317,20 +344,20 @@ def plot(ctx, date, grid, data_var):
     plt.show()
 
 
-def _retreive_urls(urls, disable=False, force=False):
+def _retrieve_urls(urls, disable=False, force=False):
     tqdm.set_lock(RLock())
     p = Pool(initializer=tqdm.set_lock, initargs=(tqdm.get_lock(),))
     return p.map(
-        partial(_retreive, disable=disable, force=force), list(enumerate(urls))
+        partial(_retrieve, disable=disable, force=force), list(enumerate(urls))
     )
 
 
-def _retreive(position_and_url, disable=False, force=False):
+def _retrieve(position_and_url, disable=False, force=False):
     position, url = position_and_url
     name = pathlib.Path(urllib.parse.urlparse(url).path).name
 
     if not pathlib.Path(name).is_file() or force:
-        with TqdmUpTo(
+        with _TqdmUpTo(
             unit="B",
             unit_scale=True,
             unit_divisor=1024,
@@ -341,7 +368,7 @@ def _retreive(position_and_url, disable=False, force=False):
             leave=False,
         ) as t:
             try:
-                WaveWatch3Downloader.retreive(
+                WaveWatch3Downloader.retrieve(
                     url, filename=name, reporthook=t.update_to, force=force
                 )
             except (urllib.error.HTTPError, urllib.error.URLError) as error:
@@ -352,13 +379,16 @@ def _retreive(position_and_url, disable=False, force=False):
     else:
         success, status = True, "cached"
 
-    return DownloadResult(
+    return _DownloadResult(
         local=pathlib.Path(name).absolute(), remote=url, success=success, status=status
     )
 
 
-class TqdmUpTo(tqdm):
+class _TqdmUpTo(tqdm):
+    """Progress bar to use when retrieving data."""
+
     def update_to(self, b=1, bsize=1, tsize=None):
+        """Update the progress bar as more data are downloaded."""
         if tsize is not None:
             self.total = tsize
         return self.update(b * bsize - self.n)  # also sets self.n = b * bsize
