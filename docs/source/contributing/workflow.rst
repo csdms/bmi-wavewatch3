@@ -57,7 +57,7 @@ Local Development Server
 
 .. code:: bash
 
-    nox -s docs-live
+    nox -s live-docs
 
 
 Serve this project's documentation locally, using `sphinx-autobuild`_. This will open
@@ -72,7 +72,7 @@ Documentation Generation
 
 .. code:: bash
 
-    nox -s docs
+    nox -s build-docs
 
 Generate the documentation for *bmi-wavewatch3* into the `docs/build` folder. This (mostly)
 does the same thing as ``nox -s docs-live``, except it invokes ``sphinx-build`` instead
