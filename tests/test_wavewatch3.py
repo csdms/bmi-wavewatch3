@@ -1,3 +1,6 @@
+import numpy as np
+import xarray as xr
+
 from bmi_wavewatch3 import WaveWatch3
 
 
@@ -47,3 +50,13 @@ def test_equivalent():
     )
     assert WaveWatch3("2009-12-31") != WaveWatch3("2008-12-31")
     assert WaveWatch3("2009-12-31") == WaveWatch3("2009-12-01")
+
+
+def test_issue_17():
+    ww3 = WaveWatch3("2009-11-08")
+    data = xr.open_mfdataset(
+        [ww3._cache / url.filename for url in ww3._urls],
+        engine="cfgrib",
+        parallel=True,
+    )
+    assert data.time.data == np.datetime64("2009-11-01")
