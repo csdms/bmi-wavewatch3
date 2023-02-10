@@ -45,4 +45,4 @@ jobs:
           pip install nox
 
       - name: Test package
-        run: nox -s ${{ matrix.session }}
+        run: nox --verbose -s ${{ matrix.session }}
