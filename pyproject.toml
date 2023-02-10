@@ -42,7 +42,7 @@ dependencies = [
   "rich-click",
   "tomli",
   "tqdm",
-  "xarray",
+  "xarray[complete]",
 ]
 dynamic = ["readme", "version"]
 
