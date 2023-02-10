@@ -1,5 +1,4 @@
 import numpy as np
-import xarray as xr
 
 from bmi_wavewatch3 import WaveWatch3
 
@@ -54,9 +53,5 @@ def test_equivalent():
 
 def test_issue_17():
     ww3 = WaveWatch3("2009-11-08")
-    data = xr.open_mfdataset(
-        [ww3._cache / url.filename for url in ww3._urls],
-        engine="cfgrib",
-        parallel=True,
-    )
+    data = ww3.data
     assert data.time.data == np.datetime64("2009-11-01")
