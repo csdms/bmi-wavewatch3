@@ -53,28 +53,7 @@ repository = "https://github.com/csdms/bmi-wave-watch-3"
 changelog = "https://github.com/csdms/bmi-wave-watch-3/blob/main/CHANGES.rst"
 
 [project.optional-dependencies]
-dev = [
-  "black",
-  "flake8",
-  "flake8-bugbear",
-  "isort",
-  "nox",
-  "pre-commit",
-]
-testing = [
-  "coveralls",
-  "pytest",
-  "pytest-cov",
-  "tomli",
-]
-doc = [
-  "sphinx",
-  "pygments>=2.4",
-  "sphinx-inline-tabs",
-  "furo",
-  "sphinxcontrib.towncrier",
-]
-
+dev = ["nox"]
 
 [project.scripts]
 ww3 = "bmi_wavewatch3.cli:ww3"
