@@ -7,11 +7,23 @@ import nox
 
 
 @nox.session
-def tests(session: nox.Session) -> None:
+def test(session: nox.Session) -> None:
     """Run the tests."""
     session.install("-r", "requirements-testing.txt")
     session.install("-r", "requirements.txt")
-    session.install(".")
+    session.install(".", "--no-deps")
+
+    session.run("pytest", "--cov=src/bmi_wavewatch3", "-vvv")
+    session.run("coverage", "report", "--ignore-errors", "--show-missing")
+    # "--fail-under=100",
+
+
+@nox.session(name="test-with-conda", venv_backend="mamba")
+def test_with_conda(session: nox.Session) -> None:
+    """Run the tests."""
+    session.conda_install("--file=requirements-testing.txt")
+    session.conda_install("--file=requirements.in")
+    session.install(".", "--no-deps")
 
     session.run("pytest", "--cov=src/bmi_wavewatch3", "-vvv")
     session.run("coverage", "report", "--ignore-errors", "--show-missing")
@@ -45,6 +57,16 @@ def towncrier(session: nox.Session) -> None:
     """Check that there is a news fragment."""
     session.install("towncrier")
     session.run("towncrier", "check", "--compare-with", "origin/main")
+
+
+@nox.session
+def locks(session: nox.Session) -> None:
+    session.install("pip-tools")
+    with open("requirements.txt", "wb") as fp:
+        session.run("pip-compile", "--upgrade", "pyproject.toml", stdout=fp)
+
+    session.install("conda-lock")
+    session.run("conda-lock", "lock", "--mamba", "--kind=lock", "-f", "pyproject.toml")
 
 
 @nox.session
