@@ -11,8 +11,10 @@ formats:
 python:
   version: 3.8
   install:
+    - requirements: docs/requirements.txt
+
     - method: pip
-      path: ".[doc]"
+      path: .
   system_packages: false
 
 build:
