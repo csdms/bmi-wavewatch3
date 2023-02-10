@@ -33,16 +33,17 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Topic :: Scientific/Engineering :: Physics",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 dependencies = [
   "bmipy",
   "cfgrib",
   "click",
+  "dask",
   "matplotlib",
   "rich-click",
   "tomli",
   "tqdm",
-  "xarray[io,parallel]",
+  "xarray",
 ]
 dynamic = ["readme", "version"]
 
@@ -57,6 +58,10 @@ dev = ["nox"]
 
 [project.scripts]
 ww3 = "bmi_wavewatch3.cli:ww3"
+
+[tool.conda-lock]
+channels = ["conda-forge", "defaults"]
+platforms = ["osx-arm64", "linux-64", "osx-64", "win-64"]
 
 
 [tool.setuptools.dynamic]
