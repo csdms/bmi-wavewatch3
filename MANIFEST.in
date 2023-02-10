@@ -1,4 +1,9 @@
 include CHANGES.rst
+include .pre-commit-config.yaml
+include .readthedocs.yaml
+include noxfile.py
+include requirements*.txt
 
 recursive-exclude docs *
 recursive-exclude news *
+recursive-exclude tests *

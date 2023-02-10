@@ -89,7 +89,7 @@ repos:
 #   rev: 6.1.1
 #   hooks:
 #   - id: pydocstyle
-#     files: landlab/.*\.py$
+#     files: bmi_wavewatch3/.*\.py$
 #     args:
 #     - --convention=numpy
 #     - --add-select=D417
