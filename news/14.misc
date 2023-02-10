@@ -1,4 +1,2 @@
 Added a GitHub Actions workflow that checks to see that pull requests contain
 at least one news fragment.
-
-

@@ -210,6 +210,3 @@ since the start of the month),
 .. _WAVEWATCH III thredds: https://www.ncei.noaa.gov/thredds-ocean/catalog/ncep/nww3/catalog.html
 .. _Singlegrid data: https://polar.ncep.noaa.gov/waves/hindcasts/nww3/
 .. _Multigrid data: https://polar.ncep.noaa.gov/waves/hindcasts/multi_1/
-
-
-

@@ -39,7 +39,7 @@
    installation
    usage
    plotting
-   
+
 .. toctree::
    :caption: Development
    :maxdepth: 2

@@ -33,9 +33,8 @@ class WaveWatch3Downloader:
     @staticmethod
     def unzip(filepath):
         filepath = pathlib.Path(filepath)
-        with gzip.open(filepath, "rb") as zip_file:
-            with open(filepath.stem, "wb") as fp:
-                fp.write(zip_file.read())
+        with gzip.open(filepath, "rb") as zip_file, open(filepath.stem, "wb") as fp:
+            fp.write(zip_file.read())
         return pathlib.Path(filepath.stem)
 
     @property

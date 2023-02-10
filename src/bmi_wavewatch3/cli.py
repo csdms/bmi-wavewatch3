@@ -12,11 +12,11 @@ from multiprocessing import Pool, RLock
 import click
 import matplotlib.pyplot as plt
 from tqdm.auto import tqdm
+
 from .downloader import WaveWatch3Downloader
 from .errors import ChoiceError, DateValueError
 from .source import SOURCES
 from .wavewatch3 import WaveWatch3
-
 
 out = partial(click.secho, bold=True, file=sys.stderr)
 err = partial(click.secho, fg="red", file=sys.stderr)

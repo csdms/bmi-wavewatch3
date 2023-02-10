@@ -60,7 +60,7 @@ ww3 = "bmi_wavewatch3.cli:ww3"
 
 
 [tool.setuptools.dynamic]
-readme = {file = ["README.rst", "AUTHORS.rst", "CHANGES.rst"]}
+readme = {file = ["README.rst", "AUTHORS.rst"]}
 version = {attr = "bmi_wavewatch3._version.__version__"}
 
 [tool.pytest.ini_options]
