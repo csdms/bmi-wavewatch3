@@ -9,8 +9,10 @@ import nox
 @nox.session
 def tests(session: nox.Session) -> None:
     """Run the tests."""
-    session.install("pytest")
-    session.install(".[testing]")
+    session.install("-r", "requirements-testing.txt")
+    session.install("-r", "requirements.txt")
+    session.install(".")
+
     session.run("pytest", "--cov=src/bmi_wavewatch3", "-vvv")
     session.run("coverage", "report", "--ignore-errors", "--show-missing")
     # "--fail-under=100",
@@ -48,7 +50,10 @@ def towncrier(session: nox.Session) -> None:
 @nox.session
 def docs(session: nox.Session) -> None:
     """Build the docs."""
-    session.install(".[doc]")
+    # session.install(".[doc]")
+
+    session.install("-r", "docs/requirements.txt")
+    session.install("-e", ".")
 
     session.chdir("docs/source")
     if os.path.exists("build"):
