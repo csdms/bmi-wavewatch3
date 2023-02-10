@@ -23,6 +23,7 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: ["3.9", "3.10", "3.11"]
         session: ["test", "test-with-conda"]
+      fail-fast: false
 
     steps:
       - uses: actions/checkout@v2
