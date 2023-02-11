@@ -6,8 +6,8 @@ from itertools import chain
 import nox
 
 
-@nox.session
-def test(session: nox.Session) -> None:
+@nox.session(name="test-with-pip")
+def test_with_pip(session: nox.Session) -> None:
     """Run the tests."""
     session.install("-r", "requirements-testing.txt")
     session.install(".")
