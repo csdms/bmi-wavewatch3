@@ -34,8 +34,12 @@ dask==2023.2.0
     # via bmi-wavewatch3 (pyproject.toml)
 eccodes==1.5.1
     # via cfgrib
+ecmwflibs==0.5.0
+    # via bmi-wavewatch3 (pyproject.toml)
 findlibs==0.0.2
-    # via eccodes
+    # via
+    #   eccodes
+    #   ecmwflibs
 fonttools==4.38.0
     # via matplotlib
 fsspec==2023.1.0

@@ -10,8 +10,7 @@ import nox
 def test(session: nox.Session) -> None:
     """Run the tests."""
     session.install("-r", "requirements-testing.txt")
-    session.install("-r", "requirements.txt")
-    session.install(".", "--no-deps")
+    session.install(".")
 
     session.run("pytest", "--cov=src/bmi_wavewatch3", "-vvv")
     session.run("coverage", "report", "--ignore-errors", "--show-missing")
@@ -61,6 +60,7 @@ def towncrier(session: nox.Session) -> None:
 
 @nox.session
 def locks(session: nox.Session) -> None:
+    """Create requirement lock files."""
     session.install("pip-tools")
     with open("requirements.txt", "wb") as fp:
         session.run("pip-compile", "--upgrade", "pyproject.toml", stdout=fp)
