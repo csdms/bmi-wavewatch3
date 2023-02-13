@@ -3,7 +3,7 @@ include .pre-commit-config.yaml
 include .readthedocs.yaml
 include noxfile.py
 include requirements*.txt
-include requirements.in
+include requirements*.in
 
 recursive-exclude docs *
 recursive-exclude news *
