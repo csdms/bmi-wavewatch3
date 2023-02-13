@@ -40,8 +40,8 @@ To install *bmi-wavewatch3*, simply run the following in your terminal of choice
 
   Due to an issue with the *eccodes* package, **Windows users and users of newer
   versions of Python** may see an error when trying to run *bmi-wavewatch3* that has
-  been installed from PyPI. If you encounter this problem, try installing
-  using *conda*/*mamba*.
+  been installed from PyPI (i.e. using the *pip* method above). If you encounter this
+  problem, try installing using *conda*/*mamba*.
 
 If you would like the very latest development version of *bmi-wavewatch3* or want to
 modify or contribute code to the *bmi-wavewatch3* project, you will need to do a

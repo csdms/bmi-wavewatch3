@@ -20,5 +20,5 @@ updates:
     directory: "."
     schedule:
       interval: "daily"
-    labels: ["dependencies", "documentation"]
+    labels: ["dependencies"]
     reviewers: ["mcflugen"]
