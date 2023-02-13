@@ -44,7 +44,7 @@ dependencies = [
   "tomli",
   "tqdm",
   "xarray",
-  "findlibs",
+  "ecmwflibs",
 ]
 dynamic = ["readme", "version"]
 
