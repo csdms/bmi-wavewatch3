@@ -36,7 +36,7 @@
    :maxdepth: 2
    :hidden:
 
-   installation
+   install/index
    usage
    plotting
 
