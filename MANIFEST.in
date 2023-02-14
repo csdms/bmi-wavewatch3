@@ -1,5 +1,6 @@
 include CHANGES.rst
 include .pre-commit-config.yaml
+include .python-version
 include .readthedocs.yaml
 include noxfile.py
 include requirements*.txt
