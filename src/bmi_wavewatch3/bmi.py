@@ -1,5 +1,4 @@
 from collections import namedtuple
-from typing import Tuple
 
 import numpy
 from bmipy import Bmi
@@ -362,7 +361,7 @@ class BmiWaveWatch3(Bmi):
         """
         return len(self._input_var_names)
 
-    def get_input_var_names(self) -> Tuple[str]:
+    def get_input_var_names(self) -> tuple[str]:
         """List of a model's input variables.
 
         Input variable names must be CSDMS Standard Names, also known
@@ -394,7 +393,7 @@ class BmiWaveWatch3(Bmi):
         """
         return len(self._output_var_names)
 
-    def get_output_var_names(self) -> Tuple[str]:
+    def get_output_var_names(self) -> tuple[str]:
         """List of a model's output variables.
 
         Output variable names must be CSDMS Standard Names, also known
@@ -749,7 +748,7 @@ def _grids_from_dataset(dataset):
 
 
 def _var_grid(dataset):
-    var_to_grid = dict()
+    var_to_grid = {}
     for name, var in dataset.data_vars.items():
         shape = var.GRIB_Ny, var.GRIB_Nx
         yx_spacing = (

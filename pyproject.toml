@@ -26,23 +26,25 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
   "Programming Language :: Cython",
-  "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: Implementation :: CPython",
   "Topic :: Scientific/Engineering :: Physics",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 dependencies = [
   "bmipy",
   "cfgrib",
   "click",
+  "dask",
   "matplotlib",
   "rich-click",
   "tomli",
   "tqdm",
   "xarray",
+  "ecmwflibs",
 ]
 dynamic = ["readme", "version"]
 
@@ -53,35 +55,18 @@ repository = "https://github.com/csdms/bmi-wave-watch-3"
 changelog = "https://github.com/csdms/bmi-wave-watch-3/blob/main/CHANGES.rst"
 
 [project.optional-dependencies]
-dev = [
-  "black",
-  "flake8",
-  "flake8-bugbear",
-  "isort",
-  "nox",
-  "pre-commit",
-]
-testing = [
-  "coveralls",
-  "pytest",
-  "pytest-cov",
-  "tomli",
-]
-doc = [
-  "sphinx",
-  "pygments>=2.4",
-  "sphinx-inline-tabs",
-  "furo",
-  "sphinxcontrib.towncrier",
-]
-
+dev = ["nox"]
 
 [project.scripts]
 ww3 = "bmi_wavewatch3.cli:ww3"
 
+[tool.conda-lock]
+channels = ["conda-forge", "defaults"]
+platforms = ["osx-arm64", "linux-64", "osx-64", "win-64"]
+
 
 [tool.setuptools.dynamic]
-readme = {file = ["README.rst", "AUTHORS.rst", "CHANGES.rst"]}
+readme = {file = ["README.rst", "AUTHORS.rst"]}
 version = {attr = "bmi_wavewatch3._version.__version__"}
 
 [tool.pytest.ini_options]

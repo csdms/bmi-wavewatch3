@@ -21,7 +21,9 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.8", "3.9", "3.10"]
+        python-version: ["3.9", "3.10", "3.11"]
+        installer: ["pip", "conda"]
+      fail-fast: false
 
     steps:
       - uses: actions/checkout@v2
@@ -36,11 +38,9 @@ jobs:
       - name: Show conda installation info
         run: |
           conda info
-
-      - name: Build and install package
-        run: |
-          pip install nox
+          conda install mamba
 
       - name: Test package
-        run: nox -s tests
-
+        run: |
+          pip install nox
+          nox --verbose -s test-with-${{ matrix.installer }}

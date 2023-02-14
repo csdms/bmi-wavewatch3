@@ -1,0 +1,3 @@
+
+Updated the installation instructions to prefer *conda* installation over
+*pip* to fix *eccodes* errors.

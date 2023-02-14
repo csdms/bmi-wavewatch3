@@ -1,16 +1,30 @@
-import os
 import pathlib
 import shutil
 from itertools import chain
 
 import nox
 
+ROOT = pathlib.Path(__file__).parent
 
-@nox.session
-def tests(session: nox.Session) -> None:
+
+@nox.session(name="test-with-pip")
+def test_with_pip(session: nox.Session) -> None:
     """Run the tests."""
-    session.install("pytest")
-    session.install(".[testing]")
+    session.install("-r", "requirements-testing.in")
+    session.install(".")
+
+    session.run("pytest", "--cov=src/bmi_wavewatch3", "-vvv")
+    session.run("coverage", "report", "--ignore-errors", "--show-missing")
+    # "--fail-under=100",
+
+
+@nox.session(name="test-with-conda", venv_backend="mamba")
+def test_with_conda(session: nox.Session) -> None:
+    """Run the tests."""
+    session.conda_install("--file=requirements-testing.in")
+    session.conda_install("--file=requirements-conda.in")
+    session.install(".", "--no-deps")
+
     session.run("pytest", "--cov=src/bmi_wavewatch3", "-vvv")
     session.run("coverage", "report", "--ignore-errors", "--show-missing")
     # "--fail-under=100",
@@ -35,8 +49,6 @@ def lint(session: nox.Session) -> None:
     session.install("pre-commit")
     session.run("pre-commit", "run", "--all-files")
 
-    # towncrier(session)
-
 
 @nox.session
 def towncrier(session: nox.Session) -> None:
@@ -46,15 +58,70 @@ def towncrier(session: nox.Session) -> None:
 
 
 @nox.session
+def locks(session: nox.Session) -> None:
+    """Create requirement lock files."""
+    sync_requirements(session)
+
+    session.install("pip-tools")
+    with open("requirements.txt", "wb") as fp:
+        session.run("pip-compile", "--upgrade", "pyproject.toml", stdout=fp)
+
+    # session.install("conda-lock")
+    # session.run("conda-lock", "lock", "--mamba", "--kind=lock", "-f", "pyproject.toml")
+
+
+@nox.session(name="sync-requirements", python="3.11")
+def sync_requirements(session: nox.Session) -> None:
+    """Sync requirements.in with pyproject.toml."""
+    pypi_mapping = {"ecmwflibs": "findlibs"}
+
+    with open("requirements.in", "w") as fp:
+        session.run(
+            "python",
+            "-c",
+            """
+import os, tomllib
+with open("pyproject.toml", "rb") as fp:
+    print(os.linesep.join(sorted(tomllib.load(fp)["project"]["dependencies"])))
+""",
+            stdout=fp,
+        )
+
+    with open("requirements.in") as fp:
+        pypi_requirements = set(fp.read().splitlines())
+
+    with open("requirements-conda.in", "w") as fp:
+        for requirement in sorted(
+            {pypi_mapping.get(req, req) for req in pypi_requirements}
+        ):
+            print(requirement, file=fp)
+
+
+@nox.session
 def docs(session: nox.Session) -> None:
     """Build the docs."""
-    session.install(".[doc]")
+    build_dir = ROOT / "build"
+    docs_dir = ROOT / "docs"
 
-    session.chdir("docs/source")
-    if os.path.exists("build"):
-        shutil.rmtree("build")
-    session.run("sphinx-apidoc", "--force", "-o", "api", "../../src/bmi_wavewatch3")
-    session.run("sphinx-build", "-b", "html", "-W", ".", "build/html")
+    clean_docs(session)
+
+    session.install("-r", docs_dir / "requirements.txt")
+    session.install("-e", ".")
+
+    session.run(
+        "sphinx-apidoc", "--force", "-o", docs_dir / "source/api", "src/bmi_wavewatch3"
+    )
+
+    build_dir.mkdir(exist_ok=True)
+    session.run(
+        "sphinx-build",
+        "-b",
+        "html",
+        "-W",
+        "--keep-going",
+        docs_dir / "source",
+        build_dir / "html",
+    )
 
 
 @nox.session
@@ -120,3 +187,11 @@ def clean(session):
             p.rmdir()
         else:
             p.unlink()
+
+
+@nox.session(python=False, name="clean-docs")
+def clean_docs(session: nox.Session) -> None:
+    """Clean up the docs folder."""
+    if (ROOT / "build" / "html").exists():
+        with session.chdir(ROOT / "build"):
+            shutil.rmtree("html")

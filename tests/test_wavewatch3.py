@@ -1,3 +1,5 @@
+import numpy as np
+
 from bmi_wavewatch3 import WaveWatch3
 
 
@@ -47,3 +49,9 @@ def test_equivalent():
     )
     assert WaveWatch3("2009-12-31") != WaveWatch3("2008-12-31")
     assert WaveWatch3("2009-12-31") == WaveWatch3("2009-12-01")
+
+
+def test_issue_17():
+    ww3 = WaveWatch3("2009-11-08")
+    data = ww3.data
+    assert data.time.data == np.datetime64("2009-11-01")

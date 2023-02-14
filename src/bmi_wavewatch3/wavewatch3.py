@@ -143,7 +143,7 @@ class WaveWatch3:
         self._data = xr.open_mfdataset(
             [self._cache / url.filename for url in self._urls],
             engine="cfgrib",
-            parallel=True,
+            parallel=False,
         )
         self._step = np.searchsorted(
             self._data.step, np.datetime64(self.date, "ns") - self._data.time

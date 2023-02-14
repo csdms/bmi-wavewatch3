@@ -1,4 +1,4 @@
-.. image:: https://github.com/csdms/bmi-wavewatch3/raw/main/docs/source/_static/wavewatch3_logo.png
+.. image:: https://github.com/csdms/bmi-wavewatch3/raw/main/docs/source/_static/bmi-wavewatch3-logo-light.svg
    :target: https://github.com/csdms/bmi-wavewatch3
    :alt: Python interface to WAVEWATCH III data
 
@@ -19,8 +19,8 @@ About
 
 .. start-abstract
 
-The *bmi_wavewatch3* Python package provides both a command line interface and a programming interface
-for downloading and working with `WAVEWATCH III`_ data.
+The *bmi_wavewatch3* Python package provides both a command line interface and
+a programming interface for downloading and working with `WAVEWATCH III`_ data.
 
 *bmi_wavewatch3* provides access to the following raster data sources,
 
@@ -42,20 +42,27 @@ All data sources provide both global and regional grids.
 Installation
 ------------
 
-.. start-installation
-
-*bmi_wavewatch3* can be installed by running ``pip install bmi-wavewatch3``. It requires Python >= 3.8 to run.
-
-If you simply can't wait for the latest release, you can install *bmi_wavewatch3*
-directly from GitHub,
+To install the latest release of *bmi-wavewatch3* using *pip*, simply run the following
+in your terminal of choice:
 
 .. code-block:: bash
 
-   $ pip install git+https://github.com/csdms/bmi-wavewatch3
+  $ pip install bmi-wavewatch3
 
-*bmi_wavewatch3* is also available through *conda*, ``conda install bmi-wavewatch3 -c conda-forge``.
 
-.. end-installation
+For a full description of how to install *bmi-wavewatch3*, including using *mamba*/*conda*,
+please see the documentation for our `installation instructions`_.
+
+.. _installation instructions: https://bmi-wavewatch3.readthedocs.io/en/master/installation.html
+
+Source code
+-----------
+
+If you would like to modify or contribute code to *bmi-wavewatch3* or use the very
+latest development version, please see the documentation that describes how to
+`install bmi-wavewatch3 from source`_.
+
+.. _install bmi-wavewatch3 from source: https://bmi-wavewatch3.readthedocs.io/en/master/install/developer_install.html
 
 Usage
 -----
@@ -67,11 +74,11 @@ To get started, you can download *WAVEWATCH III* data by date with the *ww3* com
 
 .. code-block:: bash
 
-    $ ww3 fetch "2010-05-22"
+    ww3 fetch "2010-05-22"
 
 You can also do this through Python,
 
-.. code-block:: python
+.. code-block:: pycon
 
     >>> from bmi_wavewatch3 import WaveWatch3
     >>> WaveWatch3.fetch("2010-05-22")
@@ -79,7 +86,7 @@ You can also do this through Python,
 The *bmi_wavewatch3* package provides the ``WaveWatch3`` class for downloading data and
 presenting it as an *xarray* *Dataset*.
 
-.. code-block:: python
+.. code-block:: pycon
 
    >>> from bmi_wavewatch3 import WaveWatch3
    >>> ww3 = WaveWatch3("2010-05-22")
@@ -89,7 +96,7 @@ presenting it as an *xarray* *Dataset*.
 
 Use the ``inc`` method to advance in time month-by-month,
 
-.. code-block:: python
+.. code-block:: pycon
 
    >>> ww3.date
    '2010-05-22'
@@ -100,7 +107,8 @@ Use the ``inc`` method to advance in time month-by-month,
    array('2010-06-01T00:00:00.000000000', dtype='datetime64[ns]')
    ...
 
-This will download new datasets as necessary and load the new data into the ``data`` attribute.
+This will download new datasets as necessary and load the new data into the ``data``
+attribute.
 
 .. note::
 
@@ -115,13 +123,14 @@ Example
 Plot data from the command line
 ```````````````````````````````
 
-Running the following from the command line will plot the variable *significant wave height*
-from the WAVEWATCH III *at_4m* grid. Note that the time of day (in this case, 15:00) is
-separated from the date with a ``T`` (i.e. times can be given as ``YYYY-MM-DDTHH``)
+Running the following from the command line will plot the variable
+*significant wave height* from the WAVEWATCH III *at_4m* grid. Note that the time of
+day (in this case, 15:00) is separated from the date with a ``T`` (i.e. times can be
+given as ``YYYY-MM-DDTHH``)
 
 .. code:: bash
 
-  $ ww3 plot --grid=at_4m --data-var=swh "2010-09-15T15"
+  ww3 plot --grid=at_4m --data-var=swh "2010-09-15T15"
 
 .. image:: https://raw.githubusercontent.com/csdms/bmi-wavewatch3/main/docs/source/_static/hurricane_julia-light.png
   :width: 100%
@@ -145,14 +154,14 @@ Plot data from Python
 
 This example is similar to the previous but uses the *bmi_wavewatch3* Python interface.
 
-.. code:: python
+.. code:: pycon
 
    >>> from bmi_wavewatch3 import WaveWatch3
    >>> ww3 = WaveWatch3("2009-11-08")
 
 The data can be accessed as an *xarray* *Dataset* through the ``data`` attribute.
 
-.. code:: python
+.. code:: pycon
 
    >>> ww3.data
    <xarray.Dataset>
@@ -179,10 +188,10 @@ The data can be accessed as an *xarray* *Dataset* through the ``data`` attribute
        institution:             US National Weather Service - NCEP
        history:                 2022-06-08T16:08 GRIB to CDM+CF via cfgrib-0.9.1...
 
-The ``step`` attribute points to the current time slice into the data (i.e number of three hour increments
-since the start of the month),
+The ``step`` attribute points to the current time slice into the data (i.e number of
+three hour increments since the start of the month),
 
-.. code:: python
+.. code:: pycon
 
    >>> ww3.step
    56
@@ -210,6 +219,3 @@ since the start of the month),
 .. _WAVEWATCH III thredds: https://www.ncei.noaa.gov/thredds-ocean/catalog/ncep/nww3/catalog.html
 .. _Singlegrid data: https://polar.ncep.noaa.gov/waves/hindcasts/nww3/
 .. _Multigrid data: https://polar.ncep.noaa.gov/waves/hindcasts/multi_1/
-
-
-

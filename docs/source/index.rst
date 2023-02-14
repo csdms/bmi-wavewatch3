@@ -36,10 +36,10 @@
    :maxdepth: 2
    :hidden:
 
-   installation
+   install/index
    usage
    plotting
-   
+
 .. toctree::
    :caption: Development
    :maxdepth: 2
