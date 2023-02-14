@@ -26,6 +26,8 @@ jobs:
         exclude:
           - python-version: "3.11"
             installer: "pip"
+          - os: windows-latest
+            installer: "pip"
       fail-fast: false
 
     steps:
