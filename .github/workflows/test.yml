@@ -46,4 +46,4 @@ jobs:
       - name: Test package
         run: |
           pip install nox
-          nox --verbose -s test-with-${{ matrix.installer }}
+          nox --verbose --force-python=${{ matrix.python-version }} -s test-with-${{ matrix.installer }}
