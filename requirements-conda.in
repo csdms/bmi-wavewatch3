@@ -2,7 +2,7 @@ bmipy
 cfgrib
 click
 dask
-ecmwflibs
+findlibs
 matplotlib
 rich-click
 tomli

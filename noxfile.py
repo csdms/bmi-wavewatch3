@@ -22,7 +22,7 @@ def test_with_pip(session: nox.Session) -> None:
 def test_with_conda(session: nox.Session) -> None:
     """Run the tests."""
     session.conda_install("--file=requirements-testing.in")
-    session.conda_install("--file=requirements.in")
+    session.conda_install("--file=requirements-conda.in")
     session.install(".", "--no-deps")
 
     session.run("pytest", "--cov=src/bmi_wavewatch3", "-vvv")
@@ -73,6 +73,7 @@ def locks(session: nox.Session) -> None:
 @nox.session(name="sync-requirements", python="3.11")
 def sync_requirements(session: nox.Session) -> None:
     """Sync requirements.in with pyproject.toml."""
+    pypi_mapping = {"ecmwflibs": "findlibs"}
 
     with open("requirements.in", "w") as fp:
         session.run(
@@ -85,6 +86,15 @@ with open("pyproject.toml", "rb") as fp:
 """,
             stdout=fp,
         )
+
+    with open("requirements.in") as fp:
+        pypi_requirements = set(fp.read().splitlines())
+
+    with open("requirements-conda.in", "w") as fp:
+        for requirement in sorted(
+            {pypi_mapping.get(req, req) for req in pypi_requirements}
+        ):
+            print(requirement, file=fp)
 
 
 @nox.session

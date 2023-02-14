@@ -42,7 +42,7 @@ Python environment,
   .. code-block:: bash
 
      cd bmi-wavewatch3
-     mamba install --file=requirements.in
+     mamba install --file=requirements-conda.in
      pip install -e .
 
 .. tab:: conda
@@ -50,7 +50,7 @@ Python environment,
   .. code-block:: bash
 
      cd bmi-wavewatch3
-     conda install --file=requirements.in
+     conda install --file=requirements-conda.in
      pip install -e .
 
 .. tab:: pip
