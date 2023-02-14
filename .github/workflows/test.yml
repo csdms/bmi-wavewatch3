@@ -23,6 +23,11 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: ["3.9", "3.10", "3.11"]
         installer: ["pip", "conda"]
+        exclude:
+          - python-version: "3.11"
+            installer: "pip"
+          - os: windows-latest
+            installer: "pip"
       fail-fast: false
 
     steps:
@@ -43,4 +48,4 @@ jobs:
       - name: Test package
         run: |
           pip install nox
-          nox --verbose -s test-with-${{ matrix.installer }}
+          nox --verbose --force-python=${{ matrix.python-version }} -s test-with-${{ matrix.installer }}

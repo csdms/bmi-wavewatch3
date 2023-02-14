@@ -7,7 +7,7 @@ import nox
 ROOT = pathlib.Path(__file__).parent
 
 
-@nox.session(name="test-with-pip")
+@nox.session(name="test-with-pip", python=["3.9", "3.10", "3.11"])
 def test_with_pip(session: nox.Session) -> None:
     """Run the tests."""
     session.install("-r", "requirements-testing.in")
@@ -18,7 +18,9 @@ def test_with_pip(session: nox.Session) -> None:
     # "--fail-under=100",
 
 
-@nox.session(name="test-with-conda", venv_backend="mamba")
+@nox.session(
+    name="test-with-conda", venv_backend="mamba", python=["3.9", "3.10", "3.11"]
+)
 def test_with_conda(session: nox.Session) -> None:
     """Run the tests."""
     session.conda_install("--file=requirements-testing.in")
@@ -57,11 +59,9 @@ def towncrier(session: nox.Session) -> None:
     session.run("towncrier", "check", "--compare-with", "origin/main")
 
 
-@nox.session
+@nox.session(python="3.9", venv_backend="conda")
 def locks(session: nox.Session) -> None:
     """Create requirement lock files."""
-    sync_requirements(session)
-
     session.install("pip-tools")
     with open("requirements.txt", "wb") as fp:
         session.run("pip-compile", "--upgrade", "pyproject.toml", stdout=fp)
@@ -70,7 +70,7 @@ def locks(session: nox.Session) -> None:
     # session.run("conda-lock", "lock", "--mamba", "--kind=lock", "-f", "pyproject.toml")
 
 
-@nox.session(name="sync-requirements", python="3.11")
+@nox.session(name="sync-requirements", python="3.11", venv_backend="conda")
 def sync_requirements(session: nox.Session) -> None:
     """Sync requirements.in with pyproject.toml."""
     pypi_mapping = {"ecmwflibs": "findlibs"}
