@@ -30,7 +30,7 @@ contourpy==1.0.7
     # via matplotlib
 cycler==0.11.0
     # via matplotlib
-dask==2023.2.1
+dask==2023.3.0
     # via -r requirements.in
 eccodes==1.5.1
     # via cfgrib
