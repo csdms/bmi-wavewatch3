@@ -119,7 +119,7 @@ tqdm==4.65.0
     # via -r requirements.in
 typing-extensions==4.4.0
     # via black
-xarray==2023.2.0
+xarray==2023.3.0
     # via -r requirements.in
 zipp==3.13.0
     # via importlib-resources
