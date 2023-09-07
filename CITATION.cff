@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+title: bmi-wavewatch3
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Eric
+    family-names: Hutton
+    orcid: 'https://orcid.org/0000-0002-5864-6459'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.8326599
+repository-code: 'https://github.com/csdms/bmi-wavewatch3'
+url: 'https://bmi-wavewatch3.readthedocs.io/'
+abstract: >-
+  The bmi_wavewatch3 Python package provides both a command
+  line interface and a programming interface for downloading
+  and working with WAVEWATCH III data.
+keywords:
+  - Basic Model Interface
+  - BMI
+  - wavewatch
+  - Data
+  - grib
+license: MIT
+version: 0.2.0
+date-released: '2022-06-17'
