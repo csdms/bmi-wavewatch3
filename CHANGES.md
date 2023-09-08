@@ -4,7 +4,9 @@
 .. towncrier-draft-entries:: Not yet released
 ```
 
-% towncrier release notes start
+<!-- towncrier-draft-entries:: Not yet released -->
+
+<!-- towncrier release notes start -->
 
 ## 0.2.0 (2022-06-17)
 

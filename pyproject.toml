@@ -19,7 +19,7 @@ keywords = [
   "data",
   "grib",
 ]
-license = {file = "LICENSE.rst"}
+license = {file = "LICENSE.md"}
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Science/Research",
@@ -50,9 +50,9 @@ dynamic = ["readme", "version"]
 
 [project.urls]
 homepage = "https://github.com/csdms"
-documentation = "https://github.com/csdms/bmi-wave-watch-3/blob/main/README.rst"
+documentation = "https://github.com/csdms/bmi-wave-watch-3/blob/main/README.md"
 repository = "https://github.com/csdms/bmi-wave-watch-3"
-changelog = "https://github.com/csdms/bmi-wave-watch-3/blob/main/CHANGES.rst"
+changelog = "https://github.com/csdms/bmi-wave-watch-3/blob/main/CHANGES.md"
 
 [project.optional-dependencies]
 dev = ["nox"]
@@ -66,7 +66,7 @@ platforms = ["osx-arm64", "linux-64", "osx-64", "win-64"]
 
 
 [tool.setuptools.dynamic]
-readme = {file = ["README.rst", "AUTHORS.rst"]}
+readme = {file = ["README.md", "AUTHORS.md"]}
 version = {attr = "bmi_wavewatch3._version.__version__"}
 
 [tool.pytest.ini_options]
@@ -97,28 +97,18 @@ line_length = 88
 [tool.towncrier]
 directory = "news"
 package = "bmi_wavewatch3"
-filename = "CHANGES.rst"
+filename = "CHANGES.md"
 single_file = true
-underlines = "-`^"
-issue_format = "`#{issue} <https://github.com/csdms/bmi-wavewatch3/issues/{issue}>`_"
-title_format = "{version} ({project_date})"
+underlines = ["", "", ""]
+start_string = "<!-- towncrier release notes start -->\n"
+template = "news/changelog_template.jinja"
+issue_format = "[#{issue}](https://github.com/csdms/bmi-wavewatch3/issues/{issue})"
+title_format = "## [{version}](https://github.com/csdms/bmi-wavewatch3/tree/{version}) - {project_date}"
 
-[[tool.towncrier.type]]
-directory = "feature"
-name = "New Features"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "bugfix"
-name = "Bug Fixes"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "docs"
-name = "Documentation Enhancements"
-showcontent = true
-
-[[tool.towncrier.type]]
-directory = "misc"
-name = "Other Changes and Additions"
-showcontent = true
+type = [
+  {name="New Tutorial Notebooks", directory="notebook", showcontent=true},
+  {name="New Features", directory="feature", showcontent=true},
+  {name="Bug Fixes", directory="bugfix", showcontent=true},
+  {name="Documentation Enhancements", directory="docs", showcontent=true},
+  {name="Other Changes and Additions", directory="misc", showcontent=true},
+]
