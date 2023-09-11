@@ -1,7 +1,7 @@
 # Release Notes
 
-```{eval-rst}
-.. towncrier-draft-entries:: Not yet released
+
+```{towncrier-draft-entries} Not yet released
 ```
 
 <!-- towncrier-draft-entries:: Not yet released -->
