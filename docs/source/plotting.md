@@ -1,6 +1,6 @@
 # Plotting Output
 
-## Plot data from the command line
+## Command line
 
 Running the following from the command line will plot the variable
 *significant wave height* from the WAVEWATCH III *at_4m* grid. Note that the time of
@@ -26,7 +26,7 @@ ww3 plot --grid=at_4m --data-var=swh "2010-09-15T15"
 ```
 
 
-## Plot data from Python
+## Python
 
 
 This example is similar to the previous but uses the *bmi_wavewatch3* Python interface.

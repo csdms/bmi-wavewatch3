@@ -1,11 +1,15 @@
 # Usage
 
+## Command Line
+
 To get started, you can download *WAVEWATCH III* data by date with the *ww3* command
 (use `ww3 --help` to print a brief message),
 
 ```bash
 ww3 fetch "2010-05-22"
 ```
+
+## Python
 
 You can also do this through Python,
 
