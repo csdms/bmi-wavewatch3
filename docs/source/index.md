@@ -15,8 +15,14 @@
 ```
 
 ```{include} ../../README.md
-:start-after: "% start-abstract"
-:end-before: "% end-abstract"
+:start-after: "<!-- start-abstract -->"
+:end-before: "<!-- end-abstract -->"
+```
+
+```pycon
+>>> from bmi_wavewatch3 import WaveWatch3
+>>> ww3 = WaveWatch3("2009-11-08")
+>>> ww3.data.swh[ww3.step, :, :].plot()
 ```
 
 ```{image} _static/ww3_global_swh-light.png
