@@ -33,33 +33,28 @@ curl -OL https://github.com/csdms/bmi-wavewatch3/archive/refs/heads/main.zip
 Once you have a copy of the source code, you can install it into your current
 Python environment,
 
-```{eval-rst}
-.. tab:: mamba
 
-  .. code-block:: bash
-
-     cd bmi-wavewatch3
-     mamba install --file=requirements-conda.in
-     pip install -e .
+````{tab} mamba
+```bash
+cd bmi-wavewatch3
+mamba install --file=requirements-conda.in
+pip install -e .
 ```
+````
 
-```{eval-rst}
-.. tab:: conda
-
-  .. code-block:: bash
-
-     cd bmi-wavewatch3
-     conda install --file=requirements-conda.in
-     pip install -e .
+````{tab} conda
+```bash
+cd bmi-wavewatch3
+conda install --file=requirements-conda.in
+pip install -e .
 ```
+````
 
-```{eval-rst}
-.. tab:: pip
-
-  .. code-block:: bash
-
-     cd bmi-wavewatch3
-     pip install -e .
+````{tab} pip
+```bash
+cd bmi-wavewatch3
+pip install -e .
 ```
+````
 
 % end-install-source

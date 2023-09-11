@@ -16,30 +16,24 @@ scientific computing.
 
 To install *bmi-wavewatch3*, simply run the following in your terminal of choice:
 
-```{eval-rst}
-.. tab:: mamba
-
-  .. code-block:: bash
-
-    conda install mamba -c conda-forge
-    mamba install bmi-wavewatch3 -c conda-forge
+````{tab} mamba
+```bash
+conda install mamba -c conda-forge
+mamba install bmi-wavewatch3 -c nodefaults -c conda-forge
 ```
+````
 
-```{eval-rst}
-.. tab:: conda
-
-  .. code-block:: bash
-
-    conda install bmi-wavewatch3 -c conda-forge
+````{tab} conda
+```bash
+conda install bmi-wavewatch3 -c nodefaults -c conda-forge
 ```
+````
 
-```{eval-rst}
-.. tab:: pip
-
-  .. code-block:: bash
-
-    pip install bmi-wavewatch3
+````{tab} pip
+```bash
+pip install bmi-wavewatch3
 ```
+````
 
 :::{important}
 Due to an issue with the *eccodes* package, **Windows users and users of newer

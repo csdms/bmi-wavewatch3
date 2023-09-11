@@ -13,33 +13,28 @@ environments created using *conda*/*mamba*, you can use either *conda*/*mamba* o
 *pip* to install additional packages, while *venv*-created environments
 should stick with *pip*.
 
-```{eval-rst}
-.. tab:: mamba
-
-    .. code-block:: bash
-
-        conda install mamba -c conda-forge
-        mamba create -n bmi-wavewatch3
-        mamba activate bmi-wavewatch3
+````{tab} mamba
+```bash
+conda install mamba -c conda-forge
+mamba create -n bmi-wavewatch3
+mamba activate bmi-wavewatch3
 ```
+````
 
-```{eval-rst}
-.. tab:: conda
-
-    .. code-block:: bash
-
-        conda create -n bmi-wavewatch3
-        conda activate bmi-wavewatch3
+````{tab} conda
+```bash
+conda create -n bmi-wavewatch3
+conda activate bmi-wavewatch3
 ```
+````
 
-```{eval-rst}
-.. tab:: venv
-
-    .. code-block:: bash
-
-        python -m venv .venv
-        source .venv/bin/activate
+````{tab} venv
+```bash
+python -m venv .venv
+source .venv/bin/activate
 ```
+````
+
 
 Note that you will need to activate this environment every time you want to use it in
 a new shell.
