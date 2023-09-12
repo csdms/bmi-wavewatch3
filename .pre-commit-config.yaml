@@ -1,6 +1,6 @@
 repos:
 - repo: https://github.com/psf/black
-  rev: 23.1.0
+  rev: 23.7.0
   hooks:
   - id: black
     name: black
@@ -23,7 +23,7 @@ repos:
     additional_dependencies: [".[jupyter]"]
 
 - repo: https://github.com/pycqa/flake8
-  rev: 6.0.0
+  rev: 6.1.0
   hooks:
   - id: flake8
     additional_dependencies:
@@ -42,7 +42,7 @@ repos:
     language: python
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.3.1
+  rev: v3.10.1
   hooks:
   - id: pyupgrade
     args: [--py39-plus]
@@ -68,7 +68,7 @@ repos:
     - id: trailing-whitespace
 
 - repo: https://github.com/regebro/pyroma
-  rev: "4.1"
+  rev: "4.2"
   hooks:
   - id: pyroma
     args: ["-d", "--min=10", "."]
