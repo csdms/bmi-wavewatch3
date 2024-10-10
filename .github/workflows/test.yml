@@ -64,7 +64,7 @@ jobs:
       - name: Test package
         run: |
           pip install nox
-          nox --verbose -s test-with-pip
+          nox --verbose --force-python=${{ matrix.python-version }} -s test-with-pip
 
   build-with-conda:
     name: Test with conda
