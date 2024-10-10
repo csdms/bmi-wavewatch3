@@ -44,7 +44,6 @@ dependencies = [
   "tomli",
   "tqdm",
   "xarray",
-  "ecmwflibs",
 ]
 dynamic = ["readme", "version"]
 
@@ -64,9 +63,14 @@ ww3 = "bmi_wavewatch3.cli:ww3"
 channels = ["conda-forge", "defaults"]
 platforms = ["osx-arm64", "linux-64", "osx-64", "win-64"]
 
+# [tool.setuptools]
+# py-modules = []
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.setuptools.dynamic]
-readme = {file = ["README.md", "AUTHORS.md", "CHANGES.md"], content_type="text/markdown"}
+readme = {file = ["README.md", "AUTHORS.md", "CHANGES.md"], content-type="text/markdown"}
 version = {attr = "bmi_wavewatch3._version.__version__"}
 
 [tool.pytest.ini_options]

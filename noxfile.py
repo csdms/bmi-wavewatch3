@@ -1,5 +1,7 @@
+import os
 import pathlib
 import shutil
+import sys
 from itertools import chain
 
 import nox
@@ -7,11 +9,22 @@ import nox
 ROOT = pathlib.Path(__file__).parent
 
 
-@nox.session(name="test-with-pip", python=["3.9", "3.10", "3.11"])
+@nox.session(name="test-with-pip", python=["3.10", "3.11", "3.12"])
 def test_with_pip(session: nox.Session) -> None:
     """Run the tests."""
+    first_arg = session.posargs[0] if session.posargs else None
+
     session.install("-r", "requirements-testing.in")
-    session.install(".")
+    if sys.platform.startswith("win"):
+        session.install("ecmwflibs")
+
+    if first_arg:
+        if os.path.isfile(first_arg):
+            session.install(first_arg)
+        else:
+            session.error("path must be a source distribution")
+    else:
+        session.install(".")
 
     session.run("pytest", "--cov=src/bmi_wavewatch3", "-vvv")
     session.run("coverage", "report", "--ignore-errors", "--show-missing")
@@ -19,13 +32,22 @@ def test_with_pip(session: nox.Session) -> None:
 
 
 @nox.session(
-    name="test-with-conda", venv_backend="mamba", python=["3.9", "3.10", "3.11"]
+    name="test-with-conda", venv_backend="conda", python=["3.10", "3.11", "3.12"]
 )
 def test_with_conda(session: nox.Session) -> None:
     """Run the tests."""
+    first_arg = session.posargs[0] if session.posargs else None
+
     session.conda_install("--file=requirements-testing.in")
     session.conda_install("--file=requirements-conda.in")
-    session.install(".", "--no-deps")
+
+    if first_arg:
+        if os.path.isfile(first_arg):
+            session.install(first_arg, "--no-deps")
+        else:
+            session.error("path must be a source distribution")
+    else:
+        session.install(".", "--no-deps")
 
     session.run("pytest", "--cov=src/bmi_wavewatch3", "-vvv")
     session.run("coverage", "report", "--ignore-errors", "--show-missing")

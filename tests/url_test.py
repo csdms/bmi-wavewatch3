@@ -45,6 +45,9 @@ def test_url(source, grid, quantity):
     assert f"{grid}.{quantity}.{date.year}{date.month:02}.grb" in url.filename
 
 
+# NOTE: these tests seem to be flaky because of disruption caused by
+# Hurricane Helene
+@pytest.mark.xfail
 @pytest.mark.parametrize(
     "source,grid,quantity",
     [

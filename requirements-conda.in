@@ -2,7 +2,6 @@ bmipy
 cfgrib
 click
 dask
-findlibs
 matplotlib
 rich-click
 tomli
