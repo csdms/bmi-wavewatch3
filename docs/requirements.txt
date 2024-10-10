@@ -5,3 +5,4 @@ sphinx==7.0.1
 sphinx-copybutton==0.5.1
 sphinx-inline-tabs==2022.1.2b11
 sphinxcontrib-towncrier==0.3.2a0
+towncrier==23.11.0
