@@ -17,8 +17,36 @@ jobs:
           name: build-sdist
           path: ${{ github.workspace }}/dist/*.tar.gz
 
-  build-and-test:
-    name: Run the tests
+  test-with-pip:
+    name: Test with pip
+    needs: build-sdist
+    runs-on: ${{ matrix.os }}
+
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.10", "3.11", "3.12"]
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Python ${{ matrix.python-version}}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Test package
+        run: |
+          pip install nox
+          nox --verbose -s test-with-pip
+
+  build-with-conda:
+    name: Test with conda
     needs: build-sdist
     # We want to run on external PRs, but not on our own internal PRs as they'll be run
     # by the push to the branch. Without this if check, checks are duplicated since
@@ -37,12 +65,6 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: ["3.10", "3.11", "3.12"]
-        installer: ["pip", "conda"]
-        exclude:
-          - python-version: "3.11"
-            installer: "pip"
-          - os: windows-latest
-            installer: "pip"
       fail-fast: false
 
     steps:
@@ -57,10 +79,10 @@ jobs:
 
       - name: Show conda installation info
         run: |
+          conda list
           conda info
-          conda install mamba
 
       - name: Test package
         run: |
           pip install nox
-          nox --verbose --force-python=${{ matrix.python-version }} -s test-with-${{ matrix.installer }}
+          nox --verbose --force-python=${{ matrix.python-version }} -s test-with-conda
