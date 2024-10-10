@@ -19,7 +19,7 @@ def test_with_pip(session: nox.Session) -> None:
 
 
 @nox.session(
-    name="test-with-conda", venv_backend="mamba", python=["3.10", "3.11", "3.12"]
+    name="test-with-conda", venv_backend="conda", python=["3.10", "3.11", "3.12"]
 )
 def test_with_conda(session: nox.Session) -> None:
     """Run the tests."""
