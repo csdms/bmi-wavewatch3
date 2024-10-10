@@ -2,7 +2,6 @@ bmipy
 cfgrib
 click
 dask
-ecmwflibs
 matplotlib
 rich-click
 tomli
