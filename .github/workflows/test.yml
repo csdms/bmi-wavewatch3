@@ -76,7 +76,7 @@ jobs:
       - name: Test package
         run: |
           pip install nox
-          nox --verbose --force-python=${{ matrix.python-version }} -s test-with-pip
+          nox --verbose --force-python=${{ matrix.python-version }} -s test-with-pip -- dist/*.tar.gz
 
   build-with-conda:
     name: Test with conda
@@ -117,4 +117,4 @@ jobs:
       - name: Test package
         run: |
           pip install nox
-          nox --verbose --force-python=${{ matrix.python-version }} -s test-with-conda
+          nox --verbose --force-python=${{ matrix.python-version }} -s test-with-conda -- dist/*.tar.gz
