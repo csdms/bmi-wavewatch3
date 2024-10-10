@@ -1,5 +1,6 @@
 import pathlib
 import shutil
+import sys
 from itertools import chain
 
 import nox
@@ -11,6 +12,8 @@ ROOT = pathlib.Path(__file__).parent
 def test_with_pip(session: nox.Session) -> None:
     """Run the tests."""
     session.install("-r", "requirements-testing.in")
+    if sys.platform.startswith("win"):
+        session.install("ecmwflibs")
     session.install(".")
 
     session.run("pytest", "--cov=src/bmi_wavewatch3", "-vvv")
