@@ -118,3 +118,24 @@ jobs:
         run: |
           pip install nox
           nox --verbose --force-python=${{ matrix.python-version }} -s test-with-conda -- dist/*.tar.gz
+
+  docs:
+    name: Build the docs
+    needs: check-tag
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Build documentation
+        run: |
+          pip install nox
+          nox -s docs
