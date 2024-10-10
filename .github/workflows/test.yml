@@ -3,8 +3,23 @@ name: Test
 on: [push, pull_request]
 
 jobs:
+  build-sdist:
+    name: Build source distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build sdist
+        run: pipx run build --sdist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-sdist
+          path: ${{ github.workspace }}/dist/*.tar.gz
+
   build-and-test:
     name: Run the tests
+    needs: build-sdist
     # We want to run on external PRs, but not on our own internal PRs as they'll be run
     # by the push to the branch. Without this if check, checks are duplicated since
     # internal PRs match both the push and pull_request events.
