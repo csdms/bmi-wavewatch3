@@ -78,7 +78,7 @@ jobs:
           pip install nox
           nox --verbose --force-python=${{ matrix.python-version }} -s test-with-pip -- dist/*.tar.gz
 
-  build-with-conda:
+  test-with-conda:
     name: Test with conda
     needs: build-sdist
     runs-on: ${{ matrix.os }}
@@ -119,7 +119,7 @@ jobs:
           pip install nox
           nox --verbose --force-python=${{ matrix.python-version }} -s test-with-conda -- dist/*.tar.gz
 
-  docs:
+  build-docs:
     name: Build the docs
     needs: check-tag
     runs-on: ubuntu-latest
@@ -139,3 +139,29 @@ jobs:
         run: |
           pip install nox
           nox -s docs
+
+  publish:
+    needs:
+      - check-tag
+      - test-with-pip
+      - test-with-conda
+      - build-docs
+    name: "Publish to PyPI/TestPyPI"
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: "build-*"
+          merge-multiple: true
+          path: ${{ github.workspace }}/dist
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        if: ${{ startsWith(needs.check-tag.outputs.publish_url, 'http') }}
+        with:
+          repository-url: ${{ needs.check-tag.outputs.publish_url }}
+          skip-existing: true
+          print-hash: true
+          verify-metadata: false
