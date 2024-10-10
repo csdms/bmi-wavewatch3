@@ -7,7 +7,7 @@ import nox
 ROOT = pathlib.Path(__file__).parent
 
 
-@nox.session(name="test-with-pip", python=["3.9", "3.10", "3.11"])
+@nox.session(name="test-with-pip", python=["3.10", "3.11", "3.12"])
 def test_with_pip(session: nox.Session) -> None:
     """Run the tests."""
     session.install("-r", "requirements-testing.in")
@@ -19,7 +19,7 @@ def test_with_pip(session: nox.Session) -> None:
 
 
 @nox.session(
-    name="test-with-conda", venv_backend="mamba", python=["3.9", "3.10", "3.11"]
+    name="test-with-conda", venv_backend="mamba", python=["3.10", "3.11", "3.12"]
 )
 def test_with_conda(session: nox.Session) -> None:
     """Run the tests."""
