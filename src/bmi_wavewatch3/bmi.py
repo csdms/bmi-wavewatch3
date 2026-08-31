@@ -19,7 +19,6 @@ BmiGridUniformRectilinear = namedtuple(
 
 
 class BmiWaveWatch3(Bmi):
-
     """BMI-mediated access to WaveWatch III data."""
 
     _name = "bmi-wavewatch3"
