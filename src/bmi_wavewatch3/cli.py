@@ -133,17 +133,13 @@ def info(ctx, all):
         endpoint = urllib.parse.urlunparse(
             [source.SCHEME, source.NETLOC, source.PREFIX, "", "", ""]
         )
-        sections.append(
-            textwrap.dedent(
-                f"""
+        sections.append(textwrap.dedent(f"""
                 [wavewatch3.sources.{name}]
                 grids = {sorted(source.GRIDS)!r}
                 quantities = {sorted(source.QUANTITIES)!r}
                 min_date = {source.MIN_DATE!r}
                 max_date = {source.MAX_DATE!r}
-                endpoint = {endpoint!r}"""
-            ).lstrip()
-        )
+                endpoint = {endpoint!r}""").lstrip())
 
     print((2 * os.linesep).join(sections))
 
